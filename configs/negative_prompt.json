@@ -1,0 +1,30 @@
+{
+	"file_info": {
+		"version": "1.0",
+		"description": "Negative prompts configuration including system defaults and user extensions",
+		"updated_at": "2025-12-22"
+	},
+	"system_default": {
+		"core_avoidance": [
+			"Oversized head",
+			"big head",
+			"bobblehead",
+			"chibi proportions",
+			"anime anatomy",
+			"unrealistic proportions",
+			"Anime style",
+			"2D",
+			"illustration",
+			"sketch",
+			"painting",
+			"3D render",
+			"plastic skin",
+			"doll-like face",
+			"unreal engine",
+			"CGI",
+			"distorted face",
+			"changed facial features"
+		]
+	},
+	"user_custom_placeholder": []
+}

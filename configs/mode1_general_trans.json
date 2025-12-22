@@ -1,0 +1,13 @@
+{
+	"file_info": {
+		"version": "1.1",
+		"description": "Mode 1: General Cosplay Transformation - Focuses on K-pop idol aesthetic for general usage",
+		"updated_at": "2025-12-22"
+	},
+	"prompts": {
+		"subject_identity": "A real-life Korean woman in her 20s.",
+		"costume_desc": "She is wearing a hyper-realistic costume meticulously reconstructed from the [REFERENCE_IMG] using premium materials like silk, intricate embroidery, and polished metal.",
+		"visual_vibe": "Cute K-pop idol aesthetic with a pure and innocent vibe.",
+		"facial_feature": "A youthful face with a delicate short chin and cute, expressive features."
+	}
+}

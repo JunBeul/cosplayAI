@@ -1,0 +1,12 @@
+{
+	"file_info": {
+		"version": "1.0",
+		"description": "Mode 2: Face Consistency - Preserves specific model identity using Master Image",
+		"updated_at": "2025-12-22"
+	},
+	"prompts": {
+		"subject_identity": "A real-life model with the exact face of [MASTER_IMG].",
+		"face_consistency_rule": "Meticulously lock facial features from [MASTER_IMG], including eye makeup, presence/depth of aegyosal (under-eye fat), forehead-to-chin ratio, eye shape, overall face shape, and cheek volume.",
+		"expression_mapping": "Map the specific expression and emotional nuance (gaze, mouth angle, eye crinkle) from [REFERENCE_IMG] onto the face of [MASTER_IMG] without distorting the base facial structure."
+	}
+}
