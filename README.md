@@ -128,6 +128,12 @@ GEMINI_API_KEY=YOUR_API_KEY
 python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg
 ```
 
+VFX 옵션 예시(토글 + 색상 입력):
+
+```bash
+python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --animal-features --halo-vfx --hair-color blue --eye-color gold
+```
+
 기능 2: 일러스트 + 마스터 이미지 -> 코스프레
 
 ```bash

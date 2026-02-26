@@ -20,6 +20,10 @@ class PromptBundle:
 class BaseGenerationRequest(BaseModel):
     # 기능 1/2/3 요청에서 공통으로 쓰는 옵션
     prompt_variables: dict[str, str] = Field(default_factory=dict)
+    # 선택형 VFX 옵션 (예: animal_features, halo_vfx, color_palette)
+    vfx_options: list[str] = Field(default_factory=list)
+    # VFX 옵션에 필요한 추가 값 (예: HAIR_COLOR, EYE_COLOR)
+    vfx_params: dict[str, str] = Field(default_factory=dict)
     output_filename: str | None = None
     dry_run: bool = False
 

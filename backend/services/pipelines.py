@@ -58,6 +58,8 @@ class ImageGenerationPipeline:
             prompt = self.prompt_builder.build_for_basic(
                 illustration_filename=illustration.name,
                 extra_variables=request.prompt_variables,
+                vfx_options=request.vfx_options,
+                vfx_params=request.vfx_params,
             )
             artifact = self._run_generation(
                 task=task,
@@ -65,7 +67,11 @@ class ImageGenerationPipeline:
                 prompt=prompt,
                 requested_output_filename=request.output_filename,
                 dry_run=request.dry_run,
-                extra_metadata={"illustration_path": str(illustration)},
+                extra_metadata={
+                    "illustration_path": str(illustration),
+                    "vfx_options": request.vfx_options,
+                    "vfx_params": request.vfx_params,
+                },
             )
             return self._to_result(task, artifact)
         except Exception as exc:
@@ -82,6 +88,8 @@ class ImageGenerationPipeline:
                 illustration_filename=illustration.name,
                 master_filename=master.name,
                 extra_variables=request.prompt_variables,
+                vfx_options=request.vfx_options,
+                vfx_params=request.vfx_params,
             )
             artifact = self._run_generation(
                 task=task,
@@ -92,6 +100,8 @@ class ImageGenerationPipeline:
                 extra_metadata={
                     "illustration_path": str(illustration),
                     "master_image_path": str(master),
+                    "vfx_options": request.vfx_options,
+                    "vfx_params": request.vfx_params,
                 },
             )
             return self._to_result(task, artifact)
