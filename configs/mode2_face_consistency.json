@@ -1,12 +1,17 @@
 {
-	"file_info": {
-		"version": "1.0",
-		"description": "Mode 2: Face Consistency - Preserves specific model identity using Master Image",
-		"updated_at": "2025-12-22"
-	},
-	"prompts": {
-		"subject_identity": "A real-life model with the exact face of [MASTER_IMG].",
-		"face_consistency_rule": "Meticulously lock facial features from [MASTER_IMG], including eye makeup, presence/depth of aegyosal (under-eye fat), forehead-to-chin ratio, eye shape, overall face shape, and cheek volume.",
-		"expression_mapping": "Map the specific expression and emotional nuance (gaze, mouth angle, eye crinkle) from [REFERENCE_IMG] onto the face of [MASTER_IMG] without distorting the base facial structure."
-	}
+  "file_info": {
+    "version": "1.0",
+    "description": "Mode 2: Face Consistency - Preserves specific model identity using Master Image",
+    "updated_at": "2025-12-22"
+  },
+  "prompts": {
+    "Command": "Take a very realistic cosplay photo of a girl dressed as a character in a [REFERENCE_IMG]. A cute Korean cosplayer who looks like a K-pop girl idol.",
+    "Crucial Constraints - Realistic Body Proportions": [
+      "- Face Consistency: You MUST thoroughly analyze and lock the facial features to ensure the subject is immediately recognizable as the same person in [MASTER_IMG]. This includes precisely replicating [MASTER_IMG] model's eye makeup, the presence and depth of the fullness under the eyes (aegyo-sal), the ratio between the lower face and forehead, eye shape, overall facial structure, and cheek volume."
+    ],
+    "Crucial Constraints - Facial Expression Transfer": [
+      "- Expression: Accurately apply the facial expression of the character in [REFERENCE_IMG] onto the face of [MASTER_IMG].",
+      "- Analyze and perfectly reproduce the emotional nuances, including the degree of eye squinting, the angle of the mouth corners, and gaze direction. Be careful not to distort the subject's original facial features while making the expression."
+    ]
+  }
 }

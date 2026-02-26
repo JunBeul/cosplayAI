@@ -35,7 +35,11 @@ class GeminiImageService:
         contents: list[object] = [
             self._image_part_from_path(path, types) for path in reference_paths
         ]
-        contents.append(self._build_instruction_text(prompt, len(reference_paths)))
+        role_hint = self._build_role_hint_text(len(reference_paths))
+        if role_hint:
+            contents.append(role_hint)
+        # prompt_builder가 만들어준 최종 포맷 텍스트를 그대로 전달한다.
+        contents.append(prompt.text)
 
         # 5) Gemini 2.5 Flash Image 생성 호출
         result = client.models.generate_content(
@@ -68,24 +72,16 @@ class GeminiImageService:
         image_bytes = path.read_bytes()
         return types_module.Part.from_bytes(data=image_bytes, mime_type=mime_type)
 
-    def _build_instruction_text(self, prompt: PromptBundle, reference_count: int) -> str:
-        # 기존 JSON 프롬프트 체계를 유지하면서 멀티모달 입력 설명을 추가한다.
-        role_hint = ""
+    def _build_role_hint_text(self, reference_count: int) -> str:
+        # 이미지 순서를 모델에게 알려주는 보조 텍스트 (프롬프트 본문과 분리)
         if reference_count == 2:
-            role_hint = (
+            return (
                 "The first image is the illustration reference for pose/costume/style. "
                 "The second image is the master face reference for identity consistency. "
             )
-        elif reference_count == 1:
-            role_hint = "A reference image is provided. Use it faithfully according to the prompt. "
-
-        negative_hint = ""
-        if prompt.negative:
-            # Gemini 2.5 Flash Image에는 별도 negative prompt 파라미터가 없으므로
-            # 긍정 프롬프트 마지막에 회피 지시문을 강하게 덧붙인다.
-            negative_hint = f" Strictly avoid {prompt.negative}."
-
-        return f"{role_hint}{prompt.positive}{negative_hint}".strip()
+        if reference_count == 1:
+            return "A reference image is provided. Use it faithfully according to the prompt."
+        return ""
 
     def _extract_first_image_bytes(self, response) -> bytes | None:
         candidates = getattr(response, "candidates", None) or []

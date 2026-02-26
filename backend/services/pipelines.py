@@ -58,6 +58,7 @@ class ImageGenerationPipeline:
             prompt = self.prompt_builder.build_for_basic(
                 illustration_filename=illustration.name,
                 extra_variables=request.prompt_variables,
+                user_custom_text=request.user_custom_text,
                 vfx_options=request.vfx_options,
                 vfx_params=request.vfx_params,
             )
@@ -69,6 +70,7 @@ class ImageGenerationPipeline:
                 dry_run=request.dry_run,
                 extra_metadata={
                     "illustration_path": str(illustration),
+                    "user_custom_text": request.user_custom_text,
                     "vfx_options": request.vfx_options,
                     "vfx_params": request.vfx_params,
                 },
@@ -88,6 +90,7 @@ class ImageGenerationPipeline:
                 illustration_filename=illustration.name,
                 master_filename=master.name,
                 extra_variables=request.prompt_variables,
+                user_custom_text=request.user_custom_text,
                 vfx_options=request.vfx_options,
                 vfx_params=request.vfx_params,
             )
@@ -100,6 +103,7 @@ class ImageGenerationPipeline:
                 extra_metadata={
                     "illustration_path": str(illustration),
                     "master_image_path": str(master),
+                    "user_custom_text": request.user_custom_text,
                     "vfx_options": request.vfx_options,
                     "vfx_params": request.vfx_params,
                 },
@@ -109,8 +113,8 @@ class ImageGenerationPipeline:
             return self._error_result(task, exc)
 
     def generate_master_image(self, request: MasterImageRequest) -> GenerationResult:
-        # 기능 3 흐름:
-        # 인물 사진 검증 -> 마스터 이미지용 프롬프트 -> 생성
+        # 기능 3 흐름 (보류):
+        # mode3 프롬프트 구조를 대폭 개편할 예정이므로 현재는 스텁 함수만 유지한다.
         task = TaskType.MASTER_IMAGE
         try:
             person = validate_image_path(request.person_image_path, "person_image_path")
@@ -152,8 +156,7 @@ class ImageGenerationPipeline:
             "dry_run": dry_run,
             "reference_paths": [str(path) for path in reference_paths],
             "prompt_config": prompt.mode_config_name,
-            "prompt": prompt.positive,
-            "negative_prompt": prompt.negative,
+            "prompt": prompt.text,
             **extra_metadata,
         }
 

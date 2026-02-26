@@ -9,6 +9,7 @@ from backend.services.pipelines import ImageGenerationPipeline
 
 def _add_vfx_args(parser: argparse.ArgumentParser) -> None:
     # CLI에서 선택형 VFX 옵션을 검증
+    parser.add_argument("--user-custom-text", help="Optional custom prompt text (Crucial Constraints - Additions)")
     parser.add_argument("--animal-features", action="store_true", help="Enable animal feature VFX prompt")
     parser.add_argument("--halo-vfx", action="store_true", help="Enable halo VFX prompt")
     parser.add_argument("--hair-color", help="Value for [HAIR_COLOR] when using color_palette VFX")
@@ -80,6 +81,7 @@ def main() -> int:
         result = pipeline.generate_cosplay_basic(
             CosplayBasicRequest(
                 illustration_path=args.illustration_path,
+                user_custom_text=args.user_custom_text,
                 vfx_options=vfx_options,
                 vfx_params=vfx_params,
                 output_filename=args.output_filename,
@@ -91,6 +93,7 @@ def main() -> int:
             CosplayWithMasterRequest(
                 illustration_path=args.illustration_path,
                 master_image_path=args.master_image_path,
+                user_custom_text=args.user_custom_text,
                 vfx_options=vfx_options,
                 vfx_params=vfx_params,
                 output_filename=args.output_filename,

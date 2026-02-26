@@ -11,15 +11,17 @@ from .enums import TaskType
 
 @dataclass(frozen=True)
 class PromptBundle:
-    # 프롬프트 생성 결과(긍정/부정 프롬프트 + 어떤 모드 설정을 썼는지)
-    positive: str
-    negative: str
+    # 최종 텍스트 프롬프트 + 어떤 모드 설정을 썼는지
+    # (negative는 별도 분리하지 않고 text 내부에 포함)
+    text: str
     mode_config_name: str
 
 
 class BaseGenerationRequest(BaseModel):
     # 기능 1/2/3 요청에서 공통으로 쓰는 옵션
     prompt_variables: dict[str, str] = Field(default_factory=dict)
+    # 유저 커스텀 텍스트 (선택사항): Crucial Constraints - Additions에 삽입
+    user_custom_text: str | None = None
     # 선택형 VFX 옵션 (예: animal_features, halo_vfx, color_palette)
     vfx_options: list[str] = Field(default_factory=list)
     # VFX 옵션에 필요한 추가 값 (예: HAIR_COLOR, EYE_COLOR)

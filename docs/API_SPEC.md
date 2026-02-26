@@ -60,6 +60,7 @@
   "prompt_variables": {
     "CHARACTER_NAME": "Iroha"
   },
+  "user_custom_text": "Use soft rim light and slightly wider framing.",
   "vfx_options": ["animal_features", "halo_vfx", "color_palette"],
   "vfx_params": {
     "HAIR_COLOR": "blue",
@@ -75,6 +76,8 @@
 - `illustration_path` (필수): 서버에서 접근 가능한 일러스트 이미지 경로
   - 권장 형식: 프로젝트 루트 기준 상대경로 (`inputs/references/...`)
 - `prompt_variables` (선택): JSON 프롬프트 템플릿 치환값
+- `user_custom_text` (선택): 사용자 커스텀 프롬프트 문장
+  - `Crucial Constraints - Additions` 항목의 값으로 들어감
 - `vfx_options` (선택): VFX 선택 목록
   - 지원값: `animal_features`, `halo_vfx`, `color_palette`
 - `vfx_params` (선택): VFX 옵션용 치환값
@@ -95,6 +98,7 @@
   "illustration_path": "inputs/references/ref_iroha.jpg",
   "master_image_path": "inputs/master_faces/master_iroha.jpg",
   "prompt_variables": {},
+  "user_custom_text": "Emphasize elegant stage atmosphere and clean highlights.",
   "vfx_options": ["halo_vfx"],
   "vfx_params": {},
   "output_filename": null,
