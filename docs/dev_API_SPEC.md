@@ -1,12 +1,12 @@
-# API 명세서 (MVP, JSON 요청/응답)
+# API 스펙 (dev_API_SPEC)
 
 이 문서는 현재 Python 백엔드 프로토타입의 API 명세입니다.
 
 ---
 
 - 루트
-  - 서비스 안내: [README.md](README.md)
-  - 개발/운영/재현 가이드: [README_DEV.md](README_DEV.md)
+  - 서비스 안내: [README.md](../README.md)
+  - 개발/운영/재현 가이드: [README_DEV.md](../README_DEV.md)
 
 ---
 

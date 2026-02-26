@@ -1,12 +1,12 @@
-# 프로젝트 구조 (MVP 기준)
+# 프로젝트 구조 (dev_PROJECT_STRUCTURE)
 
-이 문서는 현재 코드 기준으로 프로젝트 구조와 실행 흐름을 설명합니다.
+이 문서는 저장소의 디렉터리 구조, 계층별 책임, 실행 흐름, 생성물 위치를 개발자 관점에서 정리한 문서입니다. 실행/환경/API는 README_DEV.md, API 상세는 docs/dev_API_SPEC.md를 참고하세요.
 
 ---
 
 - 루트
-  - 서비스 안내: [README.md](README.md)
-  - 개발/운영/재현 가이드: [README_DEV.md](README_DEV.md)
+  - 서비스 안내: [README.md](../README.md)
+  - 개발/운영/재현 가이드: [README_DEV.md](../README_DEV.md)
 
 ---
 

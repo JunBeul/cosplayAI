@@ -2,25 +2,23 @@
 
 프로젝트를 로컬에서 실행하고, 재현하고, 점검하기 위한 문서입니다. 프로젝트 배경/성과 중심 설명은 루트 README를 참고하고, 이 문서는 실행/환경/API/배포 재현에 집중합니다.
 
----
-
-- 루트
-  - 서비스 안내: [README.md](README.md)
+- 서비스 URL: 추가 예정
+- 서비스 안내: [README.md](README.md)
 
 ---
 
 ## INDEX
 
-1. 실행 환경 준비 (`## 1. 실행 환경`)
-2. 환경변수 설정 (`## 2. 환경변수`)
-3. CLI `--dry-run`으로 프롬프트/메타데이터 확인 (`## 3. CLI 실행 방법`)
-4. API 서버 실행 및 헬스체크 확인 (`## 4. API 서버 실행 방법`)
-5. API 요청/응답 형식 확인 (`## 5. API 상세 스펙`)
-6. 내부 구조/코드 진입 순서 확인 (`## 6. 프로젝트 구조`)
+1. 실행 환경 준비
+2. 환경변수 설정
+3. CLI 실행 방법
+4. API 서버 실행 방법
+5. API SPEC
+6. 프로젝트 구조
 
 ---
 
-## 1. 실행 환경
+## 1. 실행 환경 준비
 
 ### 요구 사항
 
@@ -43,7 +41,7 @@ python -m pip install -r requirements.txt
 
 ---
 
-## 2. 환경변수
+## 2. 환경변수 설정
 
 프로젝트 루트에 `.env` 파일을 만들고 아래 값을 설정합니다.
 
@@ -135,14 +133,14 @@ API 상세 스펙은 `docs/API_SPEC.md`를 참고하세요.
 
 ---
 
-## 5. API 상세 스팩
+## 5. API SPEC
 
-API 상세 스펙은 [`docs/dev_API_SPEC.md`](docs/dev_API_SPEC.md)를 참고하세요.
+- 상세 API 문서: [`docs/dev_API_SPEC.md`](docs/dev_API_SPEC.md)
 
 ---
 
 ## 6. 프로젝트 구조
 
-프로젝트 구조는 [`docs/dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)를 참고해주세요.
+- 상세 구조 문서: [`docs/dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)
 
 ---
