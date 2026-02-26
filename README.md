@@ -1,40 +1,45 @@
 # CosplayAI
 
-애니메이션 일러스트를 입력하면 코스프레 실사 이미지를 생성하는 서비스를 목표로 하는 프로젝트입니다.
+애니메이션 일러스트를 기반으로 코스프레 실사 이미지를 생성하는 서비스를 목표로 하는 프로젝트입니다.
+
+---
+
+개발/운영/재현 가이드는 [`README_DEV.md`](README_DEV.md)를 참고해주세요.
+
+---
 
 ## 1. 프로젝트 개요
 
-CosplayAI는 다음 문제를 해결하기 위한 프로젝트입니다.
+CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 
-- 사용자가 업로드한 애니메이션 일러스트를 기반으로 실사 코스프레 이미지 생성
-- 얼굴 일관성을 유지하기 위한 마스터 이미지 기반 생성
-- 사용자 인물 사진으로 마스터 이미지 생성
+- 사용자가 업로드한 애니메이션 일러스트를 실사 코스프레 이미지로 변환
+- 마스터 얼굴 이미지를 활용해 얼굴 일관성을 강화한 코스프레 이미지 생성
+- 인물 사진을 기반으로 마스터 이미지 생성 (예정)
+
+현재는 안드로이드 앱과 연동될 백엔드 MVP를 중심으로 개발 중입니다.
+
+---
 
 ## 2. 핵심 기능
 
 1. 일러스트 -> 코스프레 실사 이미지 생성
 2. 일러스트 + 마스터 이미지 -> 얼굴 일관성 강화 코스프레 이미지 생성
-3. 인물 사진 -> 마스터 이미지 생성
+3. 인물 사진 -> 마스터 이미지 생성 (구조 준비, 상세 로직 구현 예정)
 
-추가로 제공되는 개발 편의 기능:
+추가로 백엔드 MVP에는 다음 기능이 포함되어 있습니다.
 
-- CLI 실행 (`backend/cli.py`)
-- FastAPI 기반 API 서버 (`backend/api`)
-- 프롬프트 템플릿 JSON 분리 (`configs/`)
-- 생성 메타데이터(JSON) 저장 (`outputs/`)
+- FastAPI 기반 API 서버
+- 로컬 검증용 CLI 실행 도구
+- JSON 기반 프롬프트 설계/병합 구조
+- 생성 결과 메타데이터 저장
 
-## 3. 프로젝트 진행도
+---
 
-### 현재 상태 (MVP 백엔드 기준)
+## 3. 프로젝트 프리뷰
 
-- [x] 프롬프트 템플릿(JSON) 구조 분리
-- [x] 기능 1/2/3 파이프라인 분리
-- [x] FastAPI API 엔드포인트 구성
-- [x] CLI 테스트 실행기 구성
-- [x] 결과 이미지 + 메타데이터 저장 구조
-- [ ] 입력 품질 검사 고도화
-- [ ] 안드로이드 앱 업로드/결과 UI 연동
-- [ ] 업로드 API(`multipart`) 및 비동기 Job 처리
+> 추가 예정
+
+---
 
 ## 4. 기술 스택
 
@@ -52,131 +57,79 @@ CosplayAI는 다음 문제를 해결하기 위한 프로젝트입니다.
 ![python-dotenv](https://img.shields.io/badge/python--dotenv-222222?style=for-the-badge&logo=dotenv&logoColor=white)
 ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white)
 
-## 5. 프로젝트 구조
+---
+
+## 5. 프로젝트 로드맵
+
+- [x] 기획
+- [x] 프롬프트 설계 기반 구축
+  - [ ] mode3 프롬프트 구축
+- [x] 백엔드 코어 로직 구현
+  - [ ] mode3는 로직 구현
+- [x] AI 모델 연동 구현
+- [x] API 서버 / 로컬 실행 도구 구성
+- [ ] 생성 품질 개선 및 프롬프트 튜닝
+- [ ] 클라이언트(안드로이드) UI/UX 구현
+- [ ] 앱-서버 연동 구현
+- [ ] 테스트 / 안정화
+- [ ] 배포
+- [ ] 이슈 분석 / 회고 문서화(`docs/`)
+
+### 현재 상태 요약
+
+- 백엔드 MVP(프롬프트 조립, 모델 호출, API/CLI) 중심으로 구현 중
+- 안드로이드 앱 UI 및 앱-서버 연동은 아직 미구현
+- 전체 구조는 정리되었고, 품질 개선/통합 단계가 남아 있음
+
+---
+
+## 6. 간략 프로젝트 구조
 
 ```text
 CosplayAI/
-├─ backend/
-│  ├─ api/                 # FastAPI 엔드포인트
-│  ├─ core/                # 환경변수/경로 등 공통 설정
-│  ├─ domain/              # 공용 요청/응답 모델, enum
-│  ├─ services/            # 프롬프트/검증/저장/Gemini 이미지 호출
-│  ├─ cli.py               # 로컬 테스트용 실행기
-│  └─ __init__.py
-├─ configs/                # 프롬프트 템플릿 JSON
-├─ docs/                   # 문서 (API 명세, 구조, requirements 관리)
-├─ inputs/                 # 테스트 입력 이미지
-│  ├─ references/
-│  └─ master_faces/
-├─ outputs/                # 생성 결과 이미지 / 메타데이터
-├─ requirements.txt        # 런타임 의존성
-└─ README.md
+├─ backend/        # API, CLI, 파이프라인, 모델 호출 로직
+├─ configs/        # 프롬프트 템플릿(JSON)
+├─ docs/           # API/구조/requirements/커밋 규칙 문서
+├─ inputs/         # 로컬 테스트 입력 이미지
+├─ outputs/        # 생성 결과 이미지 및 메타데이터
+├─ README.md       # 서비스 소개용 문서
+└─ README_DEV.md   # 개발자/협업자 온보딩 문서
 ```
 
-자세한 구조 설명:
-
-- `docs/PROJECT_STRUCTURE.md`
-- `docs/API_SPEC.md`
-- `docs/REQUIREMENTS_MANAGEMENT.md`
-
-## 6. 요구 사항
+## 7. 요구 사항
 
 - Python 3.10+ 권장
-- Google AI API 키 (`GEMINI_API_KEY`)
-- 로컬 테스트용 이미지 파일 (`inputs/` 폴더)
+- Gemini API Key (`GEMINI_API_KEY`)
+- 로컬 테스트용 이미지 파일 (`inputs/`)
 
-필수 Python 모듈은 `requirements.txt`에 정리되어 있습니다.
+필수 Python 패키지는 `requirements.txt`에 정리되어 있습니다.
 
-## 7. 프로젝트 실행
+---
 
-### 2) 가상환경 생성 및 활성화 (권장)
+## 8. 프로젝트 한계 및 개선점
 
-가상환경 생성:
+> 추가 예정
 
-```bash
-python -m venv .venv
-```
+---
 
-### 3) 의존성 설치
+## 9. 문서
 
-```bash
-pip install -r requirements.txt
-```
+<details>
+<summary>문서 목록 보기 / 숨기기</summary>
 
-의존성 관리 기준은 `docs/REQUIREMENTS_MANAGEMENT.md` 참고
+<br />
 
-### 4) 환경 변수 설정
+| 분류        | 문서                                                                         | 설명                                          |
+| ----------- | ---------------------------------------------------------------------------- | --------------------------------------------- |
+| 개발 온보딩 | `README_DEV.md`                                                              | 개발 환경 설정, CLI/API 실행 방법, 트러블슈팅 |
+| 개발        | [`docs/dev_API_SPEC.md`](docs/dev_API_SPEC.md)                               | 요청/응답 형식 및 엔드포인트 설명             |
+| 개발        | [`docs/dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)             | 현재 프로젝트 구조와 모듈 역할 설명           |
+| 개발        | [`docs/dev_REQUIREMENTS_MANAGEMENT.md`](docs/dev_REQUIREMENTS_MANAGEMENT.md) | `requirements.txt` 관리 기준 (`pip freeze`)   |
+| 개발        | [`docs/dev_COMMIT_MESSAGE_GUIDE.md`](docs/dev_COMMIT_MESSAGE_GUIDE.md)       | 커밋 타입 규칙 및 메시지 작성 가이드          |
+| 개발        | [`docs/dev_*`]()                                                             | 개발 문서 추가 포멧                           |
+| 이슈        | [`docs/issues_*`]()                                                          | 이슈 문서 추가 포멧                           |
+| 학습        | [`docs/study_*`]()                                                           | 학습 문서 추가 포멧                           |
 
-`.env.example`를 참고해서 `.env` 파일을 생성합니다.
+</details>
 
-예시:
-
-```env
-GEMINI_API_KEY=YOUR_API_KEY
-```
-
-참고:
-
-- 이미지 경로는 `.env`가 아니라 CLI 인자 또는 API 요청 JSON에서 전달합니다.
-- 상대경로는 프로젝트 루트 기준으로 해석됩니다. 예: `inputs/references/ref_iroha.jpg`
-
-### 5) CLI로 빠르게 테스트 (권장)
-
-- 기능 1: 일러스트 -> 코스프레
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg
-```
-
-- 기능 2: 일러스트 + 마스터 이미지 -> 코스프레
-
-```bash
-python -m backend.cli cosplay-with-master --illustration-path inputs/references/ref_iroha.jpg --master-image-path inputs/master_faces/master_iroha.jpg
-```
-
-- 추가 옵션 동물귀 포함 예시:
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --animal-features
-```
-
-- 추가 옵션 헤일로 포함 예시:
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --halo-vfx
-```
-
-- 추가 옵션 눈동자, 머리카락 색상 지정 예시:
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --hair-color blue --eye-color gold
-```
-
-- 추가 옵션 유저 프롬프트 추가 예시:
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --user-custom-text "Use soft rim light and slightly wider framing."
-```
-
-기능 3: 인물 사진 -> 마스터 이미지
-
-```bash
-# 해당 기능은 아직 구현되지 않았습니다.
-python -m backend.cli master-image --person-image-path inputs/references/ref_iroha.jpg
-```
-
-디버깅용으로 실제 API 호출 없이 흐름만 확인하려면:
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --dry-run
-```
-
-### 6) API 서버 실행 (안드로이드 연동용)
-
-```bash
-uvicorn backend.api.main:app --reload
-```
-
-- 기본 주소: `http://localhost:8000`
-- API 명세: `docs/API_SPEC.md`
-- Health check: `GET /api/v1/health`
+---
