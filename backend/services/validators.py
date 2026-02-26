@@ -1,5 +1,13 @@
-from __future__ import annotations
+"""
+파일명: validators.py
+작성자: JunBeul
+설명: 생성 요청에서 받은 이미지 경로를 프로젝트 기준 경로로 해석하고, 파일 존재 여부를 검증하여 Path 객체로 반환한다.
+상위 모듈: backend.services.pipelines
+하위 모듈: 없음
+"""
 
+
+from __future__ import annotations
 from pathlib import Path
 
 

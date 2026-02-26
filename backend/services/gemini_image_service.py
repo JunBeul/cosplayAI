@@ -1,8 +1,15 @@
-from __future__ import annotations
+"""
+파일명: gemini_image_service.py
+작성자: JunBeul
+설명: 이미지 파일과 텍스트 프롬프트를 Gemini 멀티모달 입력(contents)으로 구성하고, google-genai의 generate_content를 호출한 뒤 응답에서 생성된 이미지 바이트를 추출한다.
+상위 모듈: backend.services.pipelines
+하위 모듈: backend.domain.models
+"""
 
+
+from __future__ import annotations
 import mimetypes
 from pathlib import Path
-
 from backend.domain.models import PromptBundle
 
 

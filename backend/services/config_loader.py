@@ -1,5 +1,13 @@
-from __future__ import annotations
+"""
+파일명: config_loader.py
+작성자: JunBeul
+설명: configs 폴더의 JSON 파일을 읽어 dict 형태로 반환하며, 프롬프트 빌더가 템플릿 설정을 불러올 때 사용한다.
+상위 모듈: backend.services.prompt_builder
+하위 모듈: 없음
+"""
 
+
+from __future__ import annotations
 import json
 from pathlib import Path
 from typing import Any

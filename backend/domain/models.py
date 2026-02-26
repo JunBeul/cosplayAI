@@ -1,11 +1,17 @@
-from __future__ import annotations
+"""
+파일명: models.py
+작성자: JunBeul
+설명: CLI, API, 파이프라인에서 공유하는 Pydantic 요청/응답 모델과 프롬프트 번들·산출물 정보 구조를 정의한다.
+상위 모듈: backend.api.routes_generation, backend.cli, backend.services.gemini_image_service, backend.services.pipelines, backend.services.prompt_builder
+하위 모듈: backend.domain.enums
+"""
 
+
+from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
 from pydantic import BaseModel, Field
-
 from .enums import TaskType
 
 

@@ -1,8 +1,15 @@
-from __future__ import annotations
+"""
+파일명: cli.py
+작성자: JunBeul
+설명: 로컬 실행용 CLI 진입점으로, 명령어/옵션을 파싱하고 VFX 입력 조합을 검증한 뒤 생성 파이프라인을 실행해 JSON 결과를 출력한다.
+상위 모듈: 없음
+하위 모듈: backend.domain.models, backend.services.pipelines
+"""
 
+
+from __future__ import annotations
 import argparse
 import json
-
 from backend.domain.models import CosplayBasicRequest, CosplayWithMasterRequest, MasterImageRequest
 from backend.services.pipelines import ImageGenerationPipeline
 

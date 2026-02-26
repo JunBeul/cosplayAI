@@ -1,7 +1,14 @@
+"""
+파일명: deps.py
+작성자: JunBeul
+설명: FastAPI 라우터에서 재사용할 의존성(기본 ImageGenerationPipeline)을 생성하고 캐시하는 함수를 제공한다.
+상위 모듈: backend.api.routes_generation
+하위 모듈: backend.services.pipelines
+"""
+
+
 from __future__ import annotations
-
 from functools import lru_cache
-
 from backend.services.pipelines import ImageGenerationPipeline
 
 

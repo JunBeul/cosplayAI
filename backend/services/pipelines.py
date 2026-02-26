@@ -1,3 +1,12 @@
+"""
+파일명: pipelines.py
+작성자: JunBeul
+설명: 입력 경로 검증, 프롬프트 생성, Gemini 모델 호출, 결과/메타데이터 저장을 순서대로 오케스트레이션하여 통합 GenerationResult를 반환하는 메인 파이프라인을 제공한다.
+상위 모듈: backend.api.deps, backend.api.routes_generation, backend.cli
+하위 모듈: backend.core.settings, backend.domain.enums, backend.domain.models, backend.services.gemini_image_service, backend.services.prompt_builder, backend.services.storage, backend.services.validators
+"""
+
+
 from __future__ import annotations
 
 from datetime import datetime, timezone

@@ -1,10 +1,17 @@
-from __future__ import annotations
+"""
+파일명: settings.py
+작성자: JunBeul
+설명: .env 파일과 환경변수를 읽어 API 키, 모델명, 경로 설정 등을 초기화하고 재사용 가능한 Settings 객체를 제공한다.
+상위 모듈: backend.services.pipelines, backend.services.prompt_builder
+하위 모듈: 없음
+"""
 
+
+from __future__ import annotations
 import os
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-
 from dotenv import load_dotenv
 
 

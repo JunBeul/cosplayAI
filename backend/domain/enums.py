@@ -1,3 +1,12 @@
+"""
+파일명: enums.py
+작성자: JunBeul
+설명: 생성 작업 종류를 표시하는 TaskType 등 도메인 열거형을 정의한다.
+상위 모듈: backend.domain.models, backend.services.pipelines
+하위 모듈: 없음
+"""
+
+
 from enum import Enum
 
 

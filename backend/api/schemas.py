@@ -1,5 +1,13 @@
-from __future__ import annotations
+"""
+파일명: schemas.py
+작성자: JunBeul
+설명: API 계층에서만 사용하는 간단한 Pydantic 스키마(예: 헬스체크 응답)를 정의한다.
+상위 모듈: backend.api.routes_generation
+하위 모듈: 없음
+"""
 
+
+from __future__ import annotations
 from pydantic import BaseModel
 
 

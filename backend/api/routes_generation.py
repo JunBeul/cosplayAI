@@ -1,7 +1,14 @@
+"""
+파일명: routes_generation.py
+작성자: JunBeul
+설명: 헬스체크 및 이미지 생성 요청을 받아 파이프라인을 호출하고 결과를 API 응답으로 반환하는 라우터를 정의한다.
+상위 모듈: backend.api.main
+하위 모듈: backend.api.deps, backend.api.schemas, backend.domain.models, backend.services.pipelines
+"""
+
+
 from __future__ import annotations
-
 from fastapi import APIRouter, Depends
-
 from backend.domain.models import (
     CosplayBasicRequest,
     CosplayWithMasterRequest,
@@ -9,7 +16,6 @@ from backend.domain.models import (
     MasterImageRequest,
 )
 from backend.services.pipelines import ImageGenerationPipeline
-
 from .deps import get_pipeline
 from .schemas import HealthResponseSchema
 

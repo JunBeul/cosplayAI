@@ -1,1 +1,1 @@
-"""FastAPI 앱 패키지."""
+# FastAPI 관련 모듈들(main, routes, deps, schemas)을 묶는 API 패키지 초기화 파일

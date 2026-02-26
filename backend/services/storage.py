@@ -1,5 +1,13 @@
-from __future__ import annotations
+"""
+파일명: storage.py
+작성자: JunBeul
+설명: outputs 폴더 기준으로 시각과 작업 유형이 포함된 파일명을 만들고, 생성 이미지와 메타데이터 JSON을 저장하는 기능을 제공한다.
+상위 모듈: backend.services.pipelines
+하위 모듈: 없음
+"""
 
+
+from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
