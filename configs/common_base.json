@@ -12,8 +12,7 @@
     ],
     "Crucial Constraints - Realistic Body Proportions": [
       "- Absolute Standard: Apply anatomically correct adult female body proportions and completely ignore the unrealistic head-to-body ratio (anime proportions) present in the [REFERENCE_IMG].",
-      "- Head Size Reduction: Generate the subject's head size proportionally significantly smaller relative to her torso and shoulder width, conveying the 8-head or 7.5-head figure ratio of a real model. The head must sit naturally and small upon the shoulders; it must absolutely not appear oversized or like a 'bobblehead.'",
-      "- Appearance Criteria: A youthful, cute appearance with a short lower facial structure (baby face)."
+      "- Head Size Reduction: Generate the subject's head size proportionally significantly smaller relative to her torso and shoulder width, conveying the 8-head or 7.5-head figure ratio of a real model. The head must sit naturally and small upon the shoulders; it must absolutely not appear oversized or like a 'bobblehead.'"
     ],
     "Crucial Constraints - Facial Expression Transfer": [],
     "Crucial Constraints - Styling": [
