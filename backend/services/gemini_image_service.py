@@ -10,6 +10,7 @@
 from __future__ import annotations
 import mimetypes
 from pathlib import Path
+from typing import Any
 from backend.domain.models import PromptBundle
 
 
@@ -23,7 +24,7 @@ class GeminiImageService:
         self.api_key = api_key
         self.model_name = model_name
 
-    def generate_image(self, reference_paths: list[Path], prompt: PromptBundle) -> bytes:
+    def generate_image(self, reference_paths: list[Path], prompt: PromptBundle) -> tuple[bytes, dict[str, Any]]:
         # 1) API 키 확인
         if not self.api_key:
             raise RuntimeError("GEMINI_API_KEY is not set")
@@ -39,37 +40,52 @@ class GeminiImageService:
         client = genai.Client(api_key=self.api_key)
 
         # 4) 멀티모달 입력 구성 (이미지 Part + 텍스트 프롬프트)
-        contents: list[object] = [
-            self._image_part_from_path(path, types) for path in reference_paths
-        ]
+        contents: list[object] = [prompt.text]
         role_hint = self._build_role_hint_text(len(reference_paths))
         if role_hint:
             contents.append(role_hint)
         # prompt_builder가 만들어준 최종 포맷 텍스트를 그대로 전달한다.
-        contents.append(prompt.text)
+        contents.extend(self._image_part_from_path(path, types) for path in reference_paths)
 
         # 5) Gemini 2.5 Flash Image 생성 호출
         result = client.models.generate_content(
             model=self.model_name,
             contents=contents,
             config=types.GenerateContentConfig(
-                temperature=1.0,
+                temperature=0.6,
                 responseModalities=["IMAGE"],
                 safetySettings=[
                     types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                    ),
+                    types.SafetySetting(
                         category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
-                        threshold=types.HarmBlockThreshold.BLOCK_ONLY_HIGH,
-                    )
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                    ),
+                    types.SafetySetting(
+                        category=types.HarmCategory.HARM_CATEGORY_CIVIC_INTEGRITY,
+                        threshold=types.HarmBlockThreshold.BLOCK_NONE,
+                    ),
                 ],
             ),
         )
 
         # 6) 응답에서 첫 번째 이미지 파트 추출
+        response_summary = self._build_response_summary(result)
         image_bytes = self._extract_first_image_bytes(result)
         if image_bytes is None:
             raise RuntimeError(self._build_no_inline_image_error(result))
 
-        return image_bytes
+        return image_bytes, response_summary
 
     def _image_part_from_path(self, path: Path, types_module):
         mime_type, _ = mimetypes.guess_type(str(path))
@@ -113,6 +129,9 @@ class GeminiImageService:
                 details.append(f"prompt_block_reason={block_reason}")
             if block_reason_message:
                 details.append(f"prompt_block_message={self._truncate_text(str(block_reason_message))}")
+            prompt_safety_ratings = self._serialize_safety_ratings(getattr(prompt_feedback, "safety_ratings", None))
+            if prompt_safety_ratings:
+                details.append(f"prompt_safety_ratings={prompt_safety_ratings}")
 
         candidates = getattr(response, "candidates", None) or []
         details.append(f"candidates={len(candidates)}")
@@ -122,6 +141,9 @@ class GeminiImageService:
             finish_reason = getattr(candidate, "finish_reason", None)
             if finish_reason:
                 summary_parts.append(f"finish_reason={finish_reason}")
+            candidate_safety_ratings = self._serialize_safety_ratings(getattr(candidate, "safety_ratings", None))
+            if candidate_safety_ratings:
+                summary_parts.append(f"safety_ratings={candidate_safety_ratings}")
 
             content = getattr(candidate, "content", None)
             parts = getattr(content, "parts", None) or []
@@ -142,3 +164,63 @@ class GeminiImageService:
         if len(compact) <= limit:
             return compact
         return compact[: limit - 3] + "..."
+
+    def _build_response_summary(self, response) -> dict[str, Any]:
+        summary: dict[str, Any] = {}
+
+        prompt_feedback = getattr(response, "prompt_feedback", None)
+        if prompt_feedback is not None:
+            prompt_feedback_summary: dict[str, Any] = {}
+            block_reason = getattr(prompt_feedback, "block_reason", None)
+            block_reason_message = getattr(prompt_feedback, "block_reason_message", None)
+            if block_reason:
+                prompt_feedback_summary["block_reason"] = str(block_reason)
+            if block_reason_message:
+                prompt_feedback_summary["block_reason_message"] = self._truncate_text(str(block_reason_message))
+
+            prompt_safety_ratings = self._serialize_safety_ratings(getattr(prompt_feedback, "safety_ratings", None))
+            if prompt_safety_ratings:
+                prompt_feedback_summary["safety_ratings"] = prompt_safety_ratings
+
+            if prompt_feedback_summary:
+                summary["prompt_feedback"] = prompt_feedback_summary
+
+        candidates = getattr(response, "candidates", None) or []
+        summary["candidate_count"] = len(candidates)
+        summary["candidates"] = []
+        for candidate in candidates:
+            candidate_summary: dict[str, Any] = {}
+            finish_reason = getattr(candidate, "finish_reason", None)
+            if finish_reason:
+                candidate_summary["finish_reason"] = str(finish_reason)
+
+            candidate_safety_ratings = self._serialize_safety_ratings(getattr(candidate, "safety_ratings", None))
+            if candidate_safety_ratings:
+                candidate_summary["safety_ratings"] = candidate_safety_ratings
+
+            content = getattr(candidate, "content", None)
+            parts = getattr(content, "parts", None) or []
+            candidate_summary["has_inline_image"] = any(
+                getattr(getattr(part, "inline_data", None), "data", None) for part in parts
+            )
+            text_chunks = [str(getattr(part, "text")) for part in parts if getattr(part, "text", None)]
+            if text_chunks:
+                candidate_summary["text"] = self._truncate_text(" ".join(text_chunks))
+
+            summary["candidates"].append(candidate_summary)
+
+        return summary
+
+    def _serialize_safety_ratings(self, ratings) -> list[dict[str, str]]:
+        items = ratings or []
+        serialized: list[dict[str, str]] = []
+        for rating in items:
+            row = {
+                "category": str(getattr(rating, "category", "")),
+                "probability": str(getattr(rating, "probability", "")),
+            }
+            blocked = getattr(rating, "blocked", None)
+            if blocked is not None:
+                row["blocked"] = str(blocked)
+            serialized.append(row)
+        return serialized

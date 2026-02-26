@@ -174,7 +174,8 @@ class ImageGenerationPipeline:
             return GenerationArtifact(image_path=None, metadata_path=metadata_path, metadata=metadata)
 
         # 실제 모델 호출은 서비스 계층에 위임
-        image_bytes = self.gemini_image_service.generate_image(reference_paths, prompt)
+        image_bytes, gemini_response_summary = self.gemini_image_service.generate_image(reference_paths, prompt)
+        metadata["gemini_response_summary"] = gemini_response_summary
         image_path = self.storage.save_image_bytes(output_path, image_bytes)
         metadata_path = self.storage.save_metadata(image_path, metadata)
         return GenerationArtifact(image_path=image_path, metadata_path=metadata_path, metadata=metadata)
