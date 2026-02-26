@@ -23,3 +23,5 @@
 | `refactor` | 코드 구조 개선 (rename, remove, comment 포함) | `refactor: 모델과 스키마 중복 구조 정리` |
 | `test`     | 테스트 코드 추가 및 수정                      | `test: 프롬프트 빌더 단위 테스트 추가`   |
 | `chore`    | 설정 파일, 패키지 관리, 빌드 관련             | `chore: requirements.txt 추가`           |
+
+---
