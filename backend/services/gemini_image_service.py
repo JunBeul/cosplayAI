@@ -41,18 +41,15 @@ class GeminiImageService:
 
         # 4) 멀티모달 입력 구성 (이미지 Part + 텍스트 프롬프트)
         contents: list[object] = [prompt.text]
-        role_hint = self._build_role_hint_text(len(reference_paths))
-        if role_hint:
-            contents.append(role_hint)
         # prompt_builder가 만들어준 최종 포맷 텍스트를 그대로 전달한다.
-        contents.extend(self._image_part_from_path(path, types) for path in reference_paths)
+        contents.extend(self._build_reference_contents(reference_paths, types))
 
         # 5) Gemini 2.5 Flash Image 생성 호출
         result = client.models.generate_content(
             model=self.model_name,
             contents=contents,
             config=types.GenerateContentConfig(
-                temperature=0.6,
+                temperature=1.0,
                 responseModalities=["IMAGE"],
                 safetySettings=[
                     types.SafetySetting(
@@ -95,17 +92,33 @@ class GeminiImageService:
         image_bytes = path.read_bytes()
         return types_module.Part.from_bytes(data=image_bytes, mime_type=mime_type)
 
-    def _build_role_hint_text(self, reference_count: int) -> str:
-        # 이미지 순서를 모델에게 알려주는 보조 텍스트 (프롬프트 본문과 분리)
-        if reference_count == 2:
-            return (
-                "The first image is the illustration reference for pose/costume/style. "
-                "The second image is the master face reference for identity consistency. "
-            )
-        if reference_count == 1:
-            return "A reference image is provided. Use it faithfully according to the prompt."
-        return ""
+    def _build_reference_contents(self, reference_paths: list[Path], types_module) -> list[object]:
+        if len(reference_paths) == 2:
+            illustration, master = reference_paths
+            return [
+                (
+                    "Image 1 is the master face reference (identity priority). "
+                    "Image 2 is the illustration reference for costume, pose, composition, and scene mood."
+                ),
+                (
+                    "Master face reference (identity priority). Use this image for facial identity, "
+                    "facial structure, eye makeup, and fine face details. If there is any conflict, "
+                    "prioritize this image for identity."
+                ),
+                self._image_part_from_path(master, types_module),
+                (
+                    "Illustration reference. Use this image for costume, hairstyle, pose, composition, "
+                    "camera angle, and scene mood. Do not copy, crop, trace, or reproduce the reference "
+                    "image pixels."
+                ),
+                self._image_part_from_path(illustration, types_module),
+            ]
 
+        items: list[object] = []
+        if len(reference_paths) == 1:
+            items.append("A reference image is provided. Use it faithfully according to the prompt.")
+        items.extend(self._image_part_from_path(path, types_module) for path in reference_paths)
+        return items
     def _extract_first_image_bytes(self, response) -> bytes | None:
         candidates = getattr(response, "candidates", None) or []
         for candidate in candidates:
