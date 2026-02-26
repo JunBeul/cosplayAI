@@ -1,19 +1,19 @@
-# README_DEV
+# 개발/재현 가이드 (README_DEV)
 
 프로젝트를 로컬에서 실행하고, 재현하고, 점검하기 위한 문서입니다. 프로젝트 배경/성과 중심 설명은 루트 README를 참고하고, 이 문서는 실행/환경/API/배포 재현에 집중합니다.
 
 - 루트 README: README.md
 
-## 빠른 진입 순서
+---
 
-클린 클론 기준으로 가장 빠른 확인 순서는 아래와 같습니다.
+## INDEX
 
-- INDEX
-
-1.
-2.
-3.
-4. ...
+1. 실행 환경 준비 (`## 1. 실행 환경`)
+2. 환경변수 설정 (`## 2. 환경변수`)
+3. CLI `--dry-run`으로 프롬프트/메타데이터 확인 (`## 3. CLI 실행 방법`)
+4. API 서버 실행 및 헬스체크 확인 (`## 4. API 서버 실행 방법`)
+5. API 요청/응답 형식 확인 (`## 5. API 상세 스펙`)
+6. 내부 구조/코드 진입 순서 확인 (`## 6. 프로젝트 구조`)
 
 ---
 
@@ -77,7 +77,7 @@ python -m backend.cli master-image --person-image-path inputs/references/ref_iro
 
 현재 `prompt_builder.py`의 `build_for_master_image()`가 미구현이므로 실패 응답이 반환됩니다.
 
-### 기능 4. 프롬프트 확인용 `dry-run` 사용
+### 기능 4: 프롬프트 확인용 `dry-run` 사용
 
 실제 이미지 생성 API 호출 없이 프롬프트/메타데이터만 저장하려면 `--dry-run`을 사용합니다.
 
@@ -91,14 +91,14 @@ python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_ir
 
 이 파일에서 최종 프롬프트 텍스트와 메타데이터를 확인할 수 있습니다.
 
-### 기능 5. VFX / 사용자 커스텀 옵션 (CLI)
+### 기능 5: VFX / 사용자 커스텀 옵션 (CLI)
 
 > 주의
 >
-> `--hair-color`와 `--eye-color`는 함께 입력해야 합니다.
-> 하나만 입력하면 CLI에서 에러를 반환합니다.
+> - `--hair-color`와 `--eye-color`는 함께 입력해야 합니다.
+> - 하나만 입력하면 CLI에서 에러를 반환합니다.
 
-기능 1/2에서 선택적으로 사용할 수 있습니다.
+기능 1, 2에서 선택적으로 사용할 수 있습니다.
 
 - `--user-custom-text`
 - `--animal-features`
@@ -132,32 +132,14 @@ API 상세 스펙은 `docs/API_SPEC.md`를 참고하세요.
 
 ---
 
-## 7. 내부 구조
+## 5. API 상세 스팩
 
-### 자세한 구조 설명:
-
-- `docs/PROJECT_STRUCTURE.md`
-
-### 코드 확인 순서:
-
-1. `backend/cli.py`
-2. `backend/api/routes_generation.py`
-3. `backend/services/pipelines.py`
-4. `backend/services/prompt_builder.py`
-5. `backend/services/gemini_image_service.py`
-6. `backend/services/storage.py`
-7. `backend/services/validators.py`
-8. `backend/domain/models.py`
-9. `backend/core/settings.py`
-
-### 프로젝트 상세 디렉터리
-
-> 추가 예정
+API 상세 스펙은 [`docs/dev_API_SPEC.md`](docs/dev_API_SPEC.md)를 참고하세요.
 
 ---
 
-## 아키텍쳐 오버뷰
+## 6. 프로젝트 구조
 
-> 추가 예정
+프로젝트 구조는 [`docs/dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)를 참고해주세요.
 
 ---
