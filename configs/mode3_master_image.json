@@ -1,0 +1,13 @@
+{
+  "file_info": {
+    "version": "1.0",
+    "description": "Mode 3: Create standardized master face image from a user portrait",
+    "updated_at": "2026-02-26"
+  },
+  "prompts": {
+    "identity_core": "Create a realistic studio portrait master image of the same person shown in [PERSON_IMG].",
+    "photo_style": "Front-facing head-and-shoulders composition, neutral expression, clean background, soft even lighting, natural skin texture, identity-preserving facial details.",
+    "consistency_rule": "Preserve face identity faithfully from [PERSON_IMG], including face shape, eye shape, nose, lips, and overall proportions. Avoid beautification that changes identity."
+  }
+}
+
