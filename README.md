@@ -122,27 +122,46 @@ GEMINI_API_KEY=YOUR_API_KEY
 
 ### 5) CLI로 빠르게 테스트 (권장)
 
-기능 1: 일러스트 -> 코스프레
+- 기능 1: 일러스트 -> 코스프레
 
 ```bash
 python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg
 ```
 
-VFX 옵션 예시(토글 + 색상 입력):
-
-```bash
-python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --animal-features --halo-vfx --hair-color blue --eye-color gold
-```
-
-기능 2: 일러스트 + 마스터 이미지 -> 코스프레
+- 기능 2: 일러스트 + 마스터 이미지 -> 코스프레
 
 ```bash
 python -m backend.cli cosplay-with-master --illustration-path inputs/references/ref_iroha.jpg --master-image-path inputs/master_faces/master_iroha.jpg
 ```
 
+- 추가 옵션 동물귀 포함 예시:
+
+```bash
+python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --animal-features
+```
+
+- 추가 옵션 헤일로 포함 예시:
+
+```bash
+python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --halo-vfx
+```
+
+- 추가 옵션 눈동자, 머리카락 색상 지정 예시:
+
+```bash
+python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --hair-color blue --eye-color gold
+```
+
+- 추가 옵션 유저 프롬프트 추가 예시:
+
+```bash
+python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_iroha.jpg --user-custom-text "Use soft rim light and slightly wider framing."
+```
+
 기능 3: 인물 사진 -> 마스터 이미지
 
 ```bash
+# 해당 기능은 아직 구현되지 않았습니다.
 python -m backend.cli master-image --person-image-path inputs/references/ref_iroha.jpg
 ```
 
