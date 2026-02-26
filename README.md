@@ -48,7 +48,7 @@ CosplayAI는 다음 문제를 해결하기 위한 프로젝트입니다.
 ### AI / Config / Runtime
 
 ![Google GenAI](https://img.shields.io/badge/Google%20GenAI-4285F4?style=for-the-badge&logo=google&logoColor=white)
-![Imagen](https://img.shields.io/badge/Imagen-34A853?style=for-the-badge&logo=googlephotos&logoColor=white)
+![Gemini 2.5 Flash Image](https://img.shields.io/badge/Gemini%202.5%20Flash%20Image-1A73E8?style=for-the-badge&logo=googlegemini&logoColor=white)
 ![python-dotenv](https://img.shields.io/badge/python--dotenv-222222?style=for-the-badge&logo=dotenv&logoColor=white)
 ![JSON](https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white)
 
@@ -60,7 +60,7 @@ CosplayAI/
 │  ├─ api/                 # FastAPI 엔드포인트
 │  ├─ core/                # 환경변수/경로 등 공통 설정
 │  ├─ domain/              # 공용 요청/응답 모델, enum
-│  ├─ services/            # 프롬프트/검증/저장/Imagen 호출
+│  ├─ services/            # 프롬프트/검증/저장/Gemini 이미지 호출
 │  ├─ cli.py               # 로컬 테스트용 실행기
 │  └─ __init__.py
 ├─ configs/                # 프롬프트 템플릿 JSON
@@ -82,7 +82,7 @@ CosplayAI/
 ## 6. 요구 사항
 
 - Python 3.10+ 권장
-- Google GenAI(Imagen) API 사용 가능한 키 (`GEMINI_API_KEY`)
+- Google AI API 키 (`GEMINI_API_KEY`)
 - 로컬 테스트용 이미지 파일 (`inputs/` 폴더)
 
 필수 Python 모듈은 `requirements.txt`에 정리되어 있습니다.
@@ -107,7 +107,7 @@ pip install -r requirements.txt
 
 ### 4) 환경 변수 설정
 
-`.env.example`를 참고해서 `.env` 파일을 생성하고 API 키를 입력합니다.
+`.env.example`를 참고해서 `.env` 파일을 생성합니다.
 
 예시:
 

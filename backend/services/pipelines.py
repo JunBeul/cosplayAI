@@ -14,7 +14,7 @@ from backend.domain.models import (
     MasterImageRequest,
 )
 
-from .imagen_service import ImagenService
+from .gemini_image_service import GeminiImageService
 from .prompt_builder import PromptBuilder
 from .storage import StorageManager
 from .validators import validate_image_path
@@ -26,14 +26,14 @@ class ImageGenerationPipeline:
         settings: Settings,
         prompt_builder: PromptBuilder,
         storage: StorageManager,
-        imagen_service: ImagenService,
+        gemini_image_service: GeminiImageService,
     ) -> None:
         # 파이프라인은 "조립자" 역할만 한다.
-        # 실제 작업은 prompt/storage/imagen 서비스에 위임한다.
+        # 실제 작업은 prompt/storage/모델 호출 서비스에 위임한다.
         self.settings = settings
         self.prompt_builder = prompt_builder
         self.storage = storage
-        self.imagen_service = imagen_service
+        self.gemini_image_service = gemini_image_service
 
     @classmethod
     def create_default(cls) -> "ImageGenerationPipeline":
@@ -43,9 +43,9 @@ class ImageGenerationPipeline:
             settings=settings,
             prompt_builder=PromptBuilder(settings),
             storage=StorageManager(settings.outputs_dir),
-            imagen_service=ImagenService(
+            gemini_image_service=GeminiImageService(
                 api_key=settings.gemini_api_key,
-                model_name=settings.imagen_edit_model,
+                model_name=settings.image_generation_model,
             ),
         )
 
@@ -133,12 +133,12 @@ class ImageGenerationPipeline:
         # 1) 결과 파일명 결정
         # 2) 메타데이터 구성
         # 3) dry_run이면 메타데이터만 저장
-        # 4) 아니면 Imagen 호출 -> 이미지 저장 -> 메타데이터 저장
+        # 4) 아니면 모델 호출 -> 이미지 저장 -> 메타데이터 저장
         output_path = self.storage.build_output_path(task.value, requested_output_filename)
         metadata = {
             "task": task.value,
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
-            "model": self.settings.imagen_edit_model,
+            "model": self.settings.image_generation_model,
             "dry_run": dry_run,
             "reference_paths": [str(path) for path in reference_paths],
             "prompt_config": prompt.mode_config_name,
@@ -152,7 +152,7 @@ class ImageGenerationPipeline:
             return GenerationArtifact(image_path=None, metadata_path=metadata_path, metadata=metadata)
 
         # 실제 모델 호출은 서비스 계층에 위임
-        image_bytes = self.imagen_service.edit_image(reference_paths, prompt)
+        image_bytes = self.gemini_image_service.generate_image(reference_paths, prompt)
         image_path = self.storage.save_image_bytes(output_path, image_bytes)
         metadata_path = self.storage.save_metadata(image_path, metadata)
         return GenerationArtifact(image_path=image_path, metadata_path=metadata_path, metadata=metadata)

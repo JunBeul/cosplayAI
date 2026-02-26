@@ -16,7 +16,7 @@ class Settings:
     inputs_dir: Path
     outputs_dir: Path
     gemini_api_key: str | None
-    imagen_edit_model: str = "imagen-3.0-capability-001"
+    image_generation_model: str = "gemini-2.5-flash-image"
 
 
 @lru_cache(maxsize=1)

@@ -12,7 +12,7 @@
 
 - `requirements.txt`
   - 실행에 필요한 런타임 의존성 목록
-  - FastAPI 서버 실행, CLI 실행, Imagen 호출에 필요한 패키지만 포함
+  - FastAPI 서버 실행, CLI 실행, Gemini 이미지 호출에 필요한 패키지만 포함
 
 ## 설치 방법
 
@@ -68,7 +68,8 @@ pip install -r requirements.txt
 ### 2) google-genai
 
 - API 메서드/파라미터가 바뀔 수 있으므로 버전 업데이트 후 실제 생성 테스트 필요
-- 특히 `edit_image()` 호출부(`backend/services/imagen_service.py`) 확인
+- 특히 `generate_content()` 호출부(`backend/services/gemini_image_service.py`) 확인
+- 현재 프로젝트는 API 키 기반 호출을 사용합니다.
 
 ### 3) uvicorn
 

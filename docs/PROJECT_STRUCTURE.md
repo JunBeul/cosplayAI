@@ -16,7 +16,7 @@ CosplayAI/
 │  ├─ api/                 # FastAPI 엔드포인트 (안드로이드가 호출할 서버 API)
 │  ├─ core/                # 환경변수/경로 등 공통 설정
 │  ├─ domain/              # 내부 데이터 구조(dataclass, enum)
-│  ├─ services/            # 실제 작업 로직 (검증, 프롬프트, 저장, Imagen 호출)
+│  ├─ services/            # 실제 작업 로직 (검증, 프롬프트, 저장, Gemini 이미지 호출)
 │  ├─ cli.py               # 로컬 테스트용 실행기
 │  └─ __init__.py
 ├─ configs/                # 프롬프트 템플릿 JSON
@@ -59,8 +59,9 @@ CosplayAI/
   - 입력 이미지 경로 존재 여부, 확장자 검사
   - 상대경로를 프로젝트 루트 기준으로 해석 (`inputs/...`)
 
-- `backend/services/imagen_service.py`
-  - Google Imagen API 호출 전담
+- `backend/services/gemini_image_service.py`
+  - Google GenAI 기반 Gemini 이미지 생성 호출 전담
+  - API 키 기반 클라이언트 생성
 
 - `backend/services/storage.py`
   - 결과 이미지 저장
@@ -98,7 +99,7 @@ CosplayAI/
 1. `API/CLI`에서 `illustration_path` 입력 받음
 2. `validators.py`에서 경로/확장자 검증
 3. `prompt_builder.py`에서 `mode1_general_trans.json` 기반 프롬프트 생성
-4. `imagen_service.py`에서 Imagen `edit_image` 호출
+4. `gemini_image_service.py`에서 Gemini 이미지 생성 호출
 5. `storage.py`에서 이미지/메타데이터 저장
 6. 결과를 API/CLI로 반환
 
@@ -107,7 +108,7 @@ CosplayAI/
 1. 일러스트 + 마스터 이미지 경로 입력
 2. 두 이미지 모두 검증
 3. `mode2_face_consistency.json` 기반 프롬프트 생성
-4. 두 reference 이미지를 함께 Imagen에 전달
+4. 두 reference 이미지를 멀티모달 입력으로 함께 Gemini에 전달
 5. 저장 후 응답 반환
 
 ### 기능 3: 인물 사진 -> 마스터 이미지
@@ -115,7 +116,7 @@ CosplayAI/
 1. 인물 사진 경로 입력
 2. 경로/확장자 검증
 3. `mode3_master_image.json` 기반 프롬프트 생성
-4. Imagen 호출
+4. Gemini 이미지 생성 호출
 5. 저장 후 응답 반환
 
 ## 초보자용 코드 읽기 추천 순서
@@ -126,7 +127,7 @@ CosplayAI/
 2. `backend/api/routes_generation.py` (HTTP 요청이 어떻게 내부 로직으로 들어오는지)
 3. `backend/services/pipelines.py` (전체 흐름의 중심)
 4. `backend/services/prompt_builder.py`
-5. `backend/services/imagen_service.py`
+5. `backend/services/gemini_image_service.py`
 6. `backend/services/storage.py`
 7. `backend/services/validators.py`
 
