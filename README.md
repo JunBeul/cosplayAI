@@ -35,12 +35,6 @@ CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 
 ---
 
-## 3. 프로젝트 프리뷰
-
-> 추가 예정
-
----
-
 ## 4. 기술 스택
 
 ### Backend / API
@@ -83,36 +77,19 @@ CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 
 ---
 
-## 6. 간략 프로젝트 구조
-
-```text
-CosplayAI/
-├─ backend/        # API, CLI, 파이프라인, 모델 호출 로직
-├─ configs/        # 프롬프트 템플릿(JSON)
-├─ docs/           # API/구조/requirements/커밋 규칙 문서
-├─ inputs/         # 로컬 테스트 입력 이미지
-├─ outputs/        # 생성 결과 이미지 및 메타데이터
-├─ README.md       # 서비스 소개용 문서
-└─ README_DEV.md   # 개발자/협업자 온보딩 문서
-```
-
-## 7. 요구 사항
-
-- Python 3.10+ 권장
-- Gemini API Key (`GEMINI_API_KEY`)
-- 로컬 테스트용 이미지 파일 (`inputs/`)
-
-필수 Python 패키지는 `requirements.txt`에 정리되어 있습니다.
-
----
-
-## 8. 프로젝트 한계 및 개선점
+## 5. 프로젝트 프리뷰
 
 > 추가 예정
 
 ---
 
-## 9. 문서
+## 6. 프로젝트 한계 및 개선점
+
+> 추가 예정
+
+---
+
+## 7. 문서
 
 <details>
 <summary>문서 목록 보기 / 숨기기</summary>
