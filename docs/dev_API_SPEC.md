@@ -4,7 +4,9 @@
 
 ---
 
-- 루트 README: README.md
+- 루트
+  - 서비스 안내: [README.md](README.md)
+  - 개발/운영/재현 가이드: [README_DEV.md](README_DEV.md)
 
 ---
 

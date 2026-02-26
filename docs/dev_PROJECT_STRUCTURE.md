@@ -2,6 +2,14 @@
 
 이 문서는 현재 코드 기준으로 프로젝트 구조와 실행 흐름을 설명합니다.
 
+---
+
+- 루트
+  - 서비스 안내: [README.md](README.md)
+  - 개발/운영/재현 가이드: [README_DEV.md](README_DEV.md)
+
+---
+
 현재 MVP는 다음 방향으로 정리되어 있습니다.
 
 - `backend` 중심 구조 (CLI + FastAPI)
