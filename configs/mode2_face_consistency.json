@@ -5,7 +5,7 @@
     "updated_at": "2025-12-22"
   },
   "prompts": {
-    "Command": "Generate a high-resolution photorealistic cosplay photograph of a real model with the face of [Master_Image], using [Reference_Image] as a reference for the cosplay.",
+    "Command": "Generate a high-resolution photorealistic cosplay photograph of a real model with the face of [MASTER_IMG], using [REFERENCE_IMG] as a reference for the cosplay.",
     "Crucial Constraints - Realistic Body Proportions": [
       "- Face Consistency: You MUST thoroughly analyze and lock the facial features to ensure the subject is immediately recognizable as the same person in [MASTER_IMG]. This includes precisely replicating [MASTER_IMG] model's eye makeup, the presence and depth of the fullness under the eyes (aegyo-sal), the ratio between the lower face and forehead, eye shape, overall facial structure, and cheek volume."
     ],
