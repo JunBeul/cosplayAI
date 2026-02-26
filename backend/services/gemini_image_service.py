@@ -67,7 +67,7 @@ class GeminiImageService:
         # 6) 응답에서 첫 번째 이미지 파트 추출
         image_bytes = self._extract_first_image_bytes(result)
         if image_bytes is None:
-            raise RuntimeError("Gemini image response returned no inline image data")
+            raise RuntimeError(self._build_no_inline_image_error(result))
 
         return image_bytes
 
@@ -100,3 +100,45 @@ class GeminiImageService:
                 if inline_data and getattr(inline_data, "data", None):
                     return inline_data.data
         return None
+
+    def _build_no_inline_image_error(self, response) -> str:
+        base = "Gemini image response returned no inline image data"
+        details: list[str] = []
+
+        prompt_feedback = getattr(response, "prompt_feedback", None)
+        if prompt_feedback is not None:
+            block_reason = getattr(prompt_feedback, "block_reason", None)
+            block_reason_message = getattr(prompt_feedback, "block_reason_message", None)
+            if block_reason:
+                details.append(f"prompt_block_reason={block_reason}")
+            if block_reason_message:
+                details.append(f"prompt_block_message={self._truncate_text(str(block_reason_message))}")
+
+        candidates = getattr(response, "candidates", None) or []
+        details.append(f"candidates={len(candidates)}")
+
+        for idx, candidate in enumerate(candidates, start=1):
+            summary_parts: list[str] = [f"candidate{idx}"]
+            finish_reason = getattr(candidate, "finish_reason", None)
+            if finish_reason:
+                summary_parts.append(f"finish_reason={finish_reason}")
+
+            content = getattr(candidate, "content", None)
+            parts = getattr(content, "parts", None) or []
+            text_chunks: list[str] = []
+            for part in parts:
+                text = getattr(part, "text", None)
+                if text:
+                    text_chunks.append(str(text))
+            if text_chunks:
+                summary_parts.append(f"text={self._truncate_text(' '.join(text_chunks))}")
+
+            details.append(", ".join(summary_parts))
+
+        return f"{base}. " + " | ".join(details)
+
+    def _truncate_text(self, text: str, limit: int = 500) -> str:
+        compact = " ".join(text.split())
+        if len(compact) <= limit:
+            return compact
+        return compact[: limit - 3] + "..."
