@@ -1,4 +1,4 @@
-# API 스펙 (dev_API_SPEC)
+# API 스펙
 
 이 문서는 현재 Python 백엔드 프로토타입의 API 명세입니다.
 

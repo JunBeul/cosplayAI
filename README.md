@@ -108,8 +108,11 @@ CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 | 개발        | [`dev_API_SPEC.md`](docs/dev_API_SPEC.md)                               | 요청/응답 형식 및 엔드포인트 설명             |
 | 개발        | [`dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)             | 현재 프로젝트 구조와 모듈 역할 설명           |
 | 개발        | [`dev_REQUIREMENTS_MANAGEMENT.md`](docs/dev_REQUIREMENTS_MANAGEMENT.md) | `requirements.txt` 관리 기준                  |
+| 개발        | [`dev_DOCUMENTATION_GUIDE.md`](docs/dev_DOCUMENTATION_GUIDE.md)         | 문서 작성 가이드                              |
 | 개발        | [`dev_COMMIT_MESSAGE_GUIDE.md`](docs/dev_COMMIT_MESSAGE_GUIDE.md)       | 커밋 타입 규칙 및 메시지 작성 가이드          |
-| 개발        | [`dev_PYTHON_COMMENT_GUIDE.md`](docs/dev_PYTHON_COMMENT_GUIDE.md)       | 파이썬 주석 규칙 가이드                       |
+| 개발        | [`dev_PYTHON_COMMENT_GUIDE.md`](docs/dev_PYTHON_COMMENT_GUIDE.md)       | 파이썬 주석 작성 가이드                       |
+| 이슈        | [`issues_img_reference_order.md`](docs/issues_img_reference_order.md)   | 이미지 입력 순서에 따른 전달 이슈             |
+|             |                                                                         |                                               |
 | 개발        | [`dev_*`]()                                                             | 개발 문서 추가 포멧                           |
 | 이슈        | [`issues_*`]()                                                          | 이슈 문서 추가 포멧                           |
 | 학습        | [`study_*`]()                                                           | 학습 문서 추가 포멧                           |

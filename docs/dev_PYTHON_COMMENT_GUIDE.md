@@ -1,4 +1,4 @@
-﻿# Python 주석 작성 가이드 (dev_PYTHON_COMMENT_GUIDE)
+﻿# Python 주석 작성 가이드
 
 이 문서는 `CosplayAI` 백엔드 코드의 주석 작성 규칙을 정의한다.
 
