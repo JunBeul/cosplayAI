@@ -6,7 +6,6 @@
 하위 모듈: backend.core.settings, backend.domain.enums, backend.domain.models, backend.services.gemini_image_service, backend.services.prompt_builder, backend.services.storage, backend.services.validators
 """
 
-
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -37,8 +36,6 @@ class ImageGenerationPipeline:
         storage: StorageManager,
         gemini_image_service: GeminiImageService,
     ) -> None:
-        # 파이프라인은 "조립자" 역할만 한다.
-        # 실제 작업은 prompt/storage/모델 호출 서비스에 위임한다.
         self.settings = settings
         self.prompt_builder = prompt_builder
         self.storage = storage
@@ -46,7 +43,6 @@ class ImageGenerationPipeline:
 
     @classmethod
     def create_default(cls) -> "ImageGenerationPipeline":
-        # 앱/CLI에서 바로 쓰기 위한 기본 조합 팩토리
         settings = get_settings()
         return cls(
             settings=settings,
@@ -59,14 +55,15 @@ class ImageGenerationPipeline:
         )
 
     def generate_cosplay_basic(self, request: CosplayBasicRequest) -> GenerationResult:
-        # 기능 1 흐름:
-        # 입력 검증 -> 프롬프트 생성 -> 이미지 생성/저장 -> 결과 반환
         task = TaskType.COSPLAY_BASIC
         try:
             illustration = validate_image_path(request.illustration_path, "illustration_path")
-            prompt = self.prompt_builder.build_for_basic(
-                illustration_filename=illustration.name,
-                extra_variables=request.prompt_variables,
+            prompt_variables = {"REFERENCE_IMG": illustration.name}
+            if request.prompt_variables:
+                prompt_variables.update(request.prompt_variables)
+            prompt = self.prompt_builder.build(
+                mode_config_name="mode1_general_trans.json",
+                variables=prompt_variables,
                 user_custom_text=request.user_custom_text,
                 vfx_options=request.vfx_options,
                 vfx_params=request.vfx_params,
@@ -89,16 +86,19 @@ class ImageGenerationPipeline:
             return self._error_result(task, exc)
 
     def generate_cosplay_with_master(self, request: CosplayWithMasterRequest) -> GenerationResult:
-        # 기능 2 흐름:
-        # 일러스트/마스터 이미지 둘 다 검증 -> 얼굴 일관성 프롬프트 -> 생성
         task = TaskType.COSPLAY_WITH_MASTER
         try:
             illustration = validate_image_path(request.illustration_path, "illustration_path")
             master = validate_image_path(request.master_image_path, "master_image_path")
-            prompt = self.prompt_builder.build_for_with_master(
-                illustration_filename=illustration.name,
-                master_filename=master.name,
-                extra_variables=request.prompt_variables,
+            prompt_variables = {
+                "REFERENCE_IMG": illustration.name,
+                "MASTER_IMG": master.name,
+            }
+            if request.prompt_variables:
+                prompt_variables.update(request.prompt_variables)
+            prompt = self.prompt_builder.build(
+                mode_config_name="mode2_face_consistency.json",
+                variables=prompt_variables,
                 user_custom_text=request.user_custom_text,
                 vfx_options=request.vfx_options,
                 vfx_params=request.vfx_params,
@@ -122,26 +122,9 @@ class ImageGenerationPipeline:
             return self._error_result(task, exc)
 
     def generate_master_image(self, request: MasterImageRequest) -> GenerationResult:
-        # 기능 3 흐름 (보류):
-        # mode3 프롬프트 구조를 대폭 개편할 예정이므로 현재는 스텁 함수만 유지한다.
         task = TaskType.MASTER_IMAGE
-        try:
-            person = validate_image_path(request.person_image_path, "person_image_path")
-            prompt = self.prompt_builder.build_for_master_image(
-                person_filename=person.name,
-                extra_variables=request.prompt_variables,
-            )
-            artifact = self._run_generation(
-                task=task,
-                reference_paths=[person],
-                prompt=prompt,
-                requested_output_filename=request.output_filename,
-                dry_run=request.dry_run,
-                extra_metadata={"person_image_path": str(person)},
-            )
-            return self._to_result(task, artifact)
-        except Exception as exc:
-            return self._error_result(task, exc)
+        _ = request
+        return self._error_result(task, NotImplementedError("master_image is not supported yet"))
 
     def _run_generation(
         self,
@@ -152,11 +135,6 @@ class ImageGenerationPipeline:
         dry_run: bool,
         extra_metadata: dict[str, Any],
     ) -> GenerationArtifact:
-        # 공통 실행부:
-        # 1) 결과 파일명 결정
-        # 2) 메타데이터 구성
-        # 3) dry_run이면 메타데이터만 저장
-        # 4) 아니면 모델 호출 -> 이미지 저장 -> 메타데이터 저장
         output_path = self.storage.build_output_path(task.value, requested_output_filename)
         metadata = {
             "task": task.value,
@@ -173,7 +151,6 @@ class ImageGenerationPipeline:
             metadata_path = self.storage.save_metadata(None, metadata)
             return GenerationArtifact(image_path=None, metadata_path=metadata_path, metadata=metadata)
 
-        # 실제 모델 호출은 서비스 계층에 위임
         image_bytes, gemini_response_summary = self.gemini_image_service.generate_image(reference_paths, prompt)
         metadata["gemini_response_summary"] = gemini_response_summary
         image_path = self.storage.save_image_bytes(output_path, image_bytes)
@@ -181,7 +158,6 @@ class ImageGenerationPipeline:
         return GenerationArtifact(image_path=image_path, metadata_path=metadata_path, metadata=metadata)
 
     def _to_result(self, task: TaskType, artifact: GenerationArtifact) -> GenerationResult:
-        # 내부 산출물 객체를 외부 응답용 형태로 변환
         return GenerationResult(
             success=True,
             task=task,
@@ -193,7 +169,6 @@ class ImageGenerationPipeline:
         )
 
     def _error_result(self, task: TaskType, exc: Exception) -> GenerationResult:
-        # 예외를 삼켜서(앱/CLI가 처리하기 쉽게) 표준 실패 응답으로 바꾼다.
         return GenerationResult(
             success=False,
             task=task,
