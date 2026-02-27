@@ -30,3 +30,7 @@ Thumbs.db
 # Project outputs (generated images/metadata)
 outputs/*
 !outputs/.gitkeep
+
+# 임시(테스트) 코드 및 문서
+docs/temp_*
+temp_*
