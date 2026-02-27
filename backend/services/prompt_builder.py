@@ -1,5 +1,6 @@
 """
 파일명: prompt_builder.py
+작성자: JunBeul
 설명: common/mode/user/VFX 프롬프트 JSON을 규칙에 맞게 병합하고, 플레이스홀더 치환과 negative 블록 포함 포맷으로 최종 텍스트 프롬프트를 생성한다.
 상위 모듈: backend.services.pipelines
 하위 모듈: backend.core.settings, backend.domain.models, backend.services.config_loader
