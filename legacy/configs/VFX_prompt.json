@@ -1,0 +1,12 @@
+{
+  "file_info": {
+    "version": "1.0",
+    "description": "VFX & Special Features - Optional module for supernatural elements and specific color palettes",
+    "updated_at": "2025-12-22"
+  },
+  "prompts": {
+    "Crucial Constraints - Animal Features": "- If present in [REFERENCE_IMG], recreate animal ears and tails with highly realistic fur textures that seamlessly blend with the character's hair. They should look like natural biological features, not cheap props.",
+    "Crucial Constraints - Halo VFX": "- If present in [REFERENCE_IMG], render the Halo as a luminous, high-quality CG energy ring. It should have a subtle ethereal glow (bloom effect) and cast realistic ambient light onto the subject's hair and shoulders.",
+    "Crucial Constraints - Styling": "- Vividly render [HAIR_COLOR] hair and clear, transparent [EYE_COLOR] pupils as seen in the [REFERENCE_IMG]."
+  }
+}

@@ -1,0 +1,7 @@
+JSON으로 관리할 변수들
+[REFERENCE_IMG]: 일러스트 파일명
+[MASTER_IMG]: 얼굴 참조 파일명
+[HAIR_COLOR]: 머리카락 색상
+[EYE_COLOR]: 눈동자 색상
+[PERSON_IMG]: 마스터 이미지로 변환할 사람 이미지
+[CHARACTER_NAME]: 캐릭터 이름인데 아직 프롬프트에 없음

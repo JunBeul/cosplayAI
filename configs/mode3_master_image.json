@@ -6,30 +6,32 @@
   },
   "prompts": {
     "Command": "Create a realistic studio portrait master image of the same person shown in [PERSON_IMG].",
-    "Crucial Constraints - Facial Consistency": [
-      "- PRECISELY ANALYZE AND MAP the unique facial geometry, bone structure, interpupillary distance (spacing between eyes), eye shape, nose bridge alignment, and jawline definition from [PERSON_IMG].",
-      "- REPLICATE these exact features with absolute fidelity in the output master image. ",
-      "- Maintain all distinctive landmarks like specific skin texture patterns, moles, freckles, or subtle natural asymmetry present in the source image to ensure a perfect likeness."
-    ],
-    "Crucial Constraints - Pose": [
-      "- PERFECTLY FRONT-FACING POSTURE. Head, torso, and BOTH shoulders must be completely square and parallel to the camera. Looking straight ahead directly into the lens.",
-      "- No tilting of the head, no twisting of the body or shoulders."
-    ],
-    "Crucial Constraints - Lighting": [
-      "- Soft, even, professional studio lighting. Flat lighting designed to clearly reveal facial topography without harsh shadows."
-    ],
-    "Constraints - Expression": [
-      "- Neutral expression, mouth closed, relaxed facial features."
-    ],
-    "Constraints - Framing": [
-      "- Head and shoulders shot (passport photo style cropping)."
-    ],
-    "Constraints - Clothing": [
-      "- Wearing a simple, neutral-colored plain t-shirt (to avoid distraction from facial features)."
-    ],
-    "Constraints - Background": ["- Plain, solid light grey background."],
-    "Constraints - Quality": [
-      "- Ultra-realistic, 8k resolution, clean digital photography style, sharp focus on the eyes and facial details, detailed skin pores and texture clearly visible, no noise or grain."
-    ]
+    "Crucial Constraints": {
+      "Facial Consistency": [
+        "PRECISELY ANALYZE AND MAP the unique facial geometry, bone structure, interpupillary distance (spacing between eyes), eye shape, nose bridge alignment, and jawline definition from [PERSON_IMG].",
+        "REPLICATE these exact features with absolute fidelity in the output master image. ",
+        "Maintain all distinctive landmarks like specific skin texture patterns, moles, freckles, or subtle natural asymmetry present in the source image to ensure a perfect likeness."
+      ],
+      "Pose": [
+        "PERFECTLY FRONT-FACING POSTURE. Head, torso, and BOTH shoulders must be completely square and parallel to the camera. Looking straight ahead directly into the lens.",
+        "No tilting of the head, no twisting of the body or shoulders."
+      ],
+      "Lighting": [
+        "Soft, even, professional studio lighting. Flat lighting designed to clearly reveal facial topography without harsh shadows."
+      ],
+      "Expression": [
+        "Neutral expression, mouth closed, relaxed facial features."
+      ],
+      "Framing": ["Head and shoulders shot (passport photo style cropping)."],
+      "Clothing": [
+        "Wearing a simple, neutral-colored plain t-shirt (to avoid distraction from facial features)."
+      ],
+      "Background": ["Plain, solid light grey background."],
+      "Quality": [
+        "Ultra-realistic, 8k resolution, clean digital photography style, sharp focus on the eyes and facial details, detailed skin pores and texture clearly visible, no noise or grain."
+      ],
+      "Additions": ""
+    },
+    "Strictly Avoid": ""
   }
 }

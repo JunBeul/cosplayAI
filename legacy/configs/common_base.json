@@ -1,0 +1,32 @@
+{
+  "file_info": {
+    "version": "1.2",
+    "description": "Common base positive prompt module for photorealistic cosplay generation",
+    "updated_at": "2025-02-26"
+  },
+  "prompts": {
+    "Command": "",
+    "Crucial Constraints - Complete Photorealism": [
+      "- The output must be an actual portrait photograph taken with a high-resolution camera such as a Sony A7R or Canon EOS R5.",
+      "- Maintain a hyper-realistic style where fine skin pores, peach fuzz, skin texture, and individual strands of hair are vividly palpable."
+    ],
+    "Crucial Constraints - Realistic Body Proportions": [
+      "- Absolute Standard: Apply anatomically correct adult female body proportions and completely ignore the unrealistic head-to-body ratio (anime proportions) present in the [REFERENCE_IMG].",
+      "- Head Size Reduction: Generate the subject's head size proportionally significantly smaller relative to her torso and shoulder width, conveying the 8-head or 7.5-head figure ratio of a real model. The head must sit naturally and small upon the shoulders; it must absolutely not appear oversized or like a 'bobblehead.'"
+    ],
+    "Crucial Constraints - Facial Expression Transfer": [],
+    "Crucial Constraints - Styling": [
+      "- Thoroughly analyze and perfectly reproduce the costume design, hairstyle, pose, and camera angle from the [REFERENCE_IMG].",
+      "- The materials of the costume must convey the physical textures of actual real-world fabrics (cloth, silk, leather, metal ornaments, etc.)."
+    ],
+    "Crucial Constraints - Background": [
+      "- Analyze the background of the [REFERENCE_IMG] and generate the scene as if photographed in a real location possessing a similar atmosphere."
+    ],
+    "Crucial Constraints - Resolution & Aspect Ratio": [
+      "- Maintain the horizontal/vertical pixel resolution and aspect ratio of the generated image exactly identical to the [REFERENCE_IMG]. Do not crop the image or arbitrarily alter the aspect ratio."
+    ]
+  },
+  "negative_prompts": {
+    "Strictly Avoid": "Oversized head, big head, bobblehead, chibi proportions, anime anatomy, unrealistic proportions, Anime style, 2D, illustration, sketch, painting, 3D render, plastic skin, doll-like face, unreal engine, CGI, distorted face, changed facial features"
+  }
+}
