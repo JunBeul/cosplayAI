@@ -70,10 +70,10 @@ python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_ir
 python -m backend.cli cosplay-with-master --illustration-path inputs/references/ref_iroha.jpg --master-image-path inputs/master_faces/master_iroha.jpg
 ```
 
-### 기능 3: 인물 사진 -> 마스터 이미지 (현재 미구현)
+### 기능 3: 인물 사진 -> 마스터 이미지
 
 ```powershell
-python -m backend.cli master-image --person-image-path inputs/references/ref_iroha.jpg
+python -m backend.cli master-image --person-image-path upload/your/image.png
 ```
 
 현재 `prompt_builder.py`의 `build_for_master_image()`가 미구현이므로 실패 응답이 반환됩니다.
