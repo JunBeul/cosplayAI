@@ -117,6 +117,7 @@ CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 | 이슈        | [`issues_no_inline_image_data_runbook.md`](docs/issues_no_inline_image_data_runbook.md)   | `no inline image data` 대응 Runbook            |
 | 이슈        | [`issues_response_observability.md`](docs/issues_response_observability.md)               | Gemini 응답 관측성 이슈 정리                   |
 | 이슈        | [`issues_gemini_service_observer_split.md`](docs/issues_gemini_service_observer_split.md) | Gemini 호출 책임 분리 및 observer 정책 강화    |
+| 이슈        | [`issues_gemini_parameter_resolver_split.md`](docs/issues_gemini_parameter_resolver_split.md) | Gemini 파라미터 resolver 분리 이유 및 기준      |
 | 이슈        | [`issues_prompt_assembly_contract.md`](docs/issues_prompt_assembly_contract.md)           | 멀티이미지 프롬프트 조립 규약                  |
 | 이슈        | [`issues_temp_prompt_builder_refactor.md`](docs/issues_temp_prompt_builder_refactor.md)   | prompt builder 구조 개선/검증 이슈 정리        |
 | 학습        | [`study_gemini_api_parameters.md`](docs/study_gemini_api_parameters.md)                   | 이미지 생성 파라미터 정리, 있는 적용 후보 기록 |
