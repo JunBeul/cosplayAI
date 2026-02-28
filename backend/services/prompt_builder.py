@@ -1,41 +1,108 @@
-"""
+﻿"""
 파일명: prompt_builder.py
-작성자: JunBeul
-설명: common/mode/user/VFX 프롬프트 JSON을 규칙에 맞게 병합하고, 플레이스홀더 치환과 negative 블록 포함 포맷으로 최종 텍스트 프롬프트를 생성한다.
+작성자: Codex
+설명: JSON 설정을 규칙대로 병합하고 스키마/키 검증을 통해 최종 프롬프트 문자열을 생성한다.
 상위 모듈: backend.services.pipelines
 하위 모듈: backend.core.settings, backend.domain.models, backend.services.config_loader
 """
 
 
 from __future__ import annotations
-from copy import deepcopy
-from typing import Any
+from dataclasses import dataclass, field
+from pathlib import Path
+import re
+from typing import Any, NoReturn, TypedDict
 from backend.core.settings import Settings
 from backend.domain.models import PromptBundle
 from .config_loader import load_json_file
 
 
-VFX_OPTION_KEY_MAP = {
-    "animal_features": "Crucial Constraints - Animal Features",
-    "halo_vfx": "Crucial Constraints - Halo VFX",
-    "color_palette": "Crucial Constraints - Styling",
-}
-OPTIONAL_VFX_KEYS = tuple(VFX_OPTION_KEY_MAP.keys())
-CRUCIAL_PREFIX = "Crucial Constraints -"
 COMMAND_KEY = "Command"
-NEGATIVE_SECTION_KEY = "negative_prompts"
-NEGATIVE_STRICT_KEY = "Strictly Avoid"
-USER_CUSTOM_ADDITIONS_KEY = "Crucial Constraints - Additions"
+CRUCIAL_KEY = "Crucial Constraints"
+STRICTLY_AVOID_KEY = "Strictly Avoid"
+ADDITIONS_KEY = "Additions"
+VFX_OPTION_TO_CONSTRAINT_KEY = {
+    "animal_features": "Animal Features",
+    "halo_vfx": "Halo VFX",
+    "color_palette": "Styling",
+}
+SUPPORTED_PLACEHOLDER_KEYS = {
+    "REFERENCE_IMG",
+    "MASTER_IMG",
+    "HAIR_COLOR",
+    "EYE_COLOR",
+    "PERSON_IMG",
+    "CHARACTER_NAME",
+}
+PLACEHOLDER_PATTERN = re.compile(r"\[([A-Z0-9_]+)\]")
+ERROR_NAMESPACE = "PROMPT_BUILDER"
+
+
+class ModeRule(TypedDict):
+    """
+    모드별 프롬프트 구성 규칙 타입.
+    """
+
+    base: str
+    sources: list[str]
+    use_vfx: bool
+
+
+@dataclass
+class NormalizedPrompts:
+    """
+    병합/렌더링에 사용하는 정규화 프롬프트 타입.
+    """
+
+    command: list[str] = field(default_factory=list)
+    crucial_constraints: dict[str, list[str]] = field(default_factory=dict)
+    strictly_avoid: list[str] = field(default_factory=list)
+
+
+MODE_RULES: dict[str, ModeRule] = {
+    "mode1_general_trans.json": {
+        "base": "common_base.json",
+        "sources": ["mode1_general_trans.json", "user_custom_prompts.json"],
+        "use_vfx": True,
+    },
+    "mode2_face_consistency.json": {
+        "base": "common_base.json",
+        "sources": ["mode2_face_consistency.json", "user_custom_prompts.json"],
+        "use_vfx": True,
+    },
+    "mode3_master_image.json": {
+        "base": "mode3_master_image.json",
+        "sources": ["user_custom_prompts.json"],
+        "use_vfx": False,
+    },
+}
 
 
 class PromptBuilder:
-    def __init__(self, settings: Settings) -> None:
+    """configs 기반 신규 프롬프트 병합 규칙을 검증하기 위한 빌더."""
+
+    def __init__(self, settings: Settings, config_dir: Path | None = None) -> None:
         """
-        PromptBuilder를 초기화한다.
+        설정 디렉터리를 기준으로 빌더를 초기화한다.
         Args:
-            - settings: 설정 객체.
+            settings: 프로젝트 경로 정보를 담은 Settings 객체.
+            config_dir: 설정 루트 경로(선택). None이면 <project_root>/configs를 사용한다.
         """
         self.settings = settings
+        self.config_dir = config_dir or (settings.project_root / "configs")
+        self._json_cache: dict[Path, dict[str, Any]] = {}
+        self._validate_static_configs()
+
+    def _raise_value_error(self, code: str, detail: str) -> NoReturn:
+        """
+        프로젝트 표준 형식의 ValueError를 발생시킨다.
+        Args:
+            code: 예외 코드 식별자.
+            detail: 예외 상세 메시지.
+        Raises:
+            ValueError: 표준화된 메시지 포맷으로 발생한다.
+        """
+        raise ValueError(f"[{ERROR_NAMESPACE}:{code}] {detail}")
 
     def build(
         self,
@@ -46,335 +113,471 @@ class PromptBuilder:
         user_custom_text: str | None = None,
     ) -> PromptBundle:
         """
-        모드 설정 파일 기준으로 최종 프롬프트를 조립한다.
+        모드별 병합/매핑 규칙을 적용해 최종 프롬프트를 생성한다.
         Args:
-            - mode_config_name: 모드 JSON 파일명.
-            - variables: 플레이스홀더 치환 변수.
-            - vfx_options: 활성화할 VFX 옵션 목록.
-            - vfx_params: VFX 옵션용 추가 변수.
-            - user_custom_text: 사용자 추가 텍스트.
+            mode_config_name: MODE_RULES에 등록된 모드 파일명 키.
+            variables: 플레이스홀더 치환 변수. 예: REFERENCE_IMG.
+            vfx_options: 활성화할 VFX 옵션 목록. 허용값: animal_features, halo_vfx, color_palette.
+            vfx_params: VFX 전용 추가 치환 변수.
+            user_custom_text: user_custom_prompts의 Additions를 덮어쓸 사용자 입력 문자열.
         Returns:
-            - PromptBundle: 최종 텍스트와 모드 파일명을 담은 객체.
+            PromptBundle: 치환까지 완료된 최종 프롬프트 텍스트와 모드 파일명.
+        Raises:
+            ValueError: 모드/스키마/키 검증 실패 또는 잘못된 VFX 옵션일 때 발생한다.
+            FileNotFoundError: 필요한 설정 파일이 없을 때 발생한다.
         """
         variables = dict(variables or {})
-        vfx_params = dict(vfx_params or {})
+        vfx_options = list(vfx_options or [])
+
         if vfx_params:
             variables.update(vfx_params)
 
-        merged = self._build_merged_prompt_config(
+        merged_prompts = self._merge_prompts_for_mode(
             mode_config_name=mode_config_name,
-            vfx_options=vfx_options or [],
+            vfx_options=vfx_options,
             variables=variables,
             user_custom_text=user_custom_text,
         )
 
-        prompt_text = self._generate_prompt_text(merged)
-        prompt_text = self._map_prompt_text(prompt_text, variables)
+        prompt_text = self._to_prompt_text(merged_prompts)
+        prompt_text = self._map_prompt_values(prompt_text, variables)
         return PromptBundle(text=prompt_text, mode_config_name=mode_config_name)
 
-    def _build_merged_prompt_config(
+    def _merge_prompts_for_mode(
         self,
         mode_config_name: str,
         vfx_options: list[str],
         variables: dict[str, str],
         user_custom_text: str | None,
-    ) -> dict[str, Any]:
+    ) -> NormalizedPrompts:
         """
-        공통/모드/유저/VFX 프롬프트 설정을 병합한다.
+        모드 규칙에 따라 base/mode/user/VFX 프롬프트를 병합한다.
         Args:
-            - mode_config_name: 모드 JSON 파일명.
-            - vfx_options: 활성화할 VFX 옵션 목록.
-            - variables: 플레이스홀더 치환 변수.
-            - user_custom_text: 사용자 추가 텍스트.
+            mode_config_name: MODE_RULES에 등록된 모드 파일명 키.
+            vfx_options: 활성화할 VFX 옵션 목록.
+            variables: VFX 필수값 검증 및 후속 플레이스홀더 매핑에 사용하는 변수 맵.
+            user_custom_text: Additions 덮어쓰기에 사용할 사용자 입력 문자열.
         Returns:
-            - dict[str, Any]: prompts와 negative_prompts를 가진 병합 결과.
+            NormalizedPrompts: 정규화된 병합 프롬프트 블록.
+        Raises:
+            ValueError: 지원하지 않는 모드이거나 스키마/키 검증이 실패하면 발생한다.
+            FileNotFoundError: 필요한 설정 파일이 없으면 발생한다.
         """
-        base_data = deepcopy(load_json_file(self.settings.config_dir / "common_base.json"))
-        mode_data = load_json_file(self.settings.config_dir / mode_config_name)
-        user_custom_data = load_json_file(self.settings.config_dir / "user_custom_prompts.json")
-        vfx_data = load_json_file(self.settings.config_dir / "VFX_prompt.json")
+        mode_rule = MODE_RULES.get(mode_config_name)
+        if mode_rule is None:
+            allowed = ", ".join(sorted(MODE_RULES))
+            self._raise_value_error(
+                code="E_UNSUPPORTED_MODE",
+                detail=f"지원하지 않는 mode_config_name='{mode_config_name}'. 허용값: {allowed}",
+            )
 
-        merged_prompts = deepcopy(base_data.get("prompts", {}))
-        merged_negative = deepcopy(base_data.get(NEGATIVE_SECTION_KEY, {}))
-
-        self._apply_user_custom_text(user_custom_data, user_custom_text)
-
-        merged_prompts = self._merge_prompt_sections(merged_prompts, mode_data.get("prompts", {}))
-        merged_prompts = self._merge_prompt_sections(merged_prompts, user_custom_data.get("prompts", {}))
-
-        selected_vfx_prompts = self._select_vfx_prompts(
-            vfx_all_prompts=vfx_data.get("prompts", {}),
-            vfx_options=vfx_options,
-            variables=variables,
+        base_file_name = str(mode_rule["base"])
+        base_doc = self._load_json_cached(base_file_name)
+        merged = self._normalize_prompt_structure(
+            doc=base_doc,
+            file_name=base_file_name,
+            require_command=True,
+            require_constraints=True,
         )
-        merged_prompts = self._merge_prompt_sections(merged_prompts, selected_vfx_prompts)
 
-        self._merge_negative_sections(merged_negative, mode_data.get(NEGATIVE_SECTION_KEY, {}))
-        self._merge_negative_sections(merged_negative, user_custom_data.get(NEGATIVE_SECTION_KEY, {}))
-        self._merge_negative_sections(merged_negative, vfx_data.get(NEGATIVE_SECTION_KEY, {}))
+        for source_file_name in mode_rule["sources"]:
+            source_doc = self._load_json_cached(source_file_name)
+            source_prompts = self._normalize_prompt_structure(
+                doc=source_doc,
+                file_name=source_file_name,
+                require_command=False,
+                require_constraints=True,
+            )
 
-        return {
-            "prompts": merged_prompts,
-            NEGATIVE_SECTION_KEY: merged_negative,
-        }
+            if source_file_name == "user_custom_prompts.json":
+                self._apply_user_custom_text(source_prompts, user_custom_text)
 
-    def _select_vfx_prompts(
+            self._merge_prompt_block(
+                base_prompts=merged,
+                source_prompts=source_prompts,
+                base_file_name=base_file_name,
+                source_file_name=source_file_name,
+            )
+
+        if bool(mode_rule["use_vfx"]):
+            vfx_doc = self._load_json_cached("VFX_prompt.json")
+            vfx_prompts = self._normalize_prompt_structure(
+                doc=vfx_doc,
+                file_name="VFX_prompt.json",
+                require_command=False,
+                require_constraints=True,
+            )
+            selected_vfx = self._build_vfx_overlay(vfx_prompts, vfx_options, variables)
+            self._merge_prompt_block(
+                base_prompts=merged,
+                source_prompts=selected_vfx,
+                base_file_name=base_file_name,
+                source_file_name="VFX_prompt.json",
+            )
+
+        return merged
+
+    def _load_json_cached(self, file_name: str) -> dict[str, Any]:
+        """
+        설정 JSON 파일을 캐시 기반으로 로드한다.
+        Args:
+            file_name: 설정 파일명.
+        Returns:
+            dict[str, Any]: 로드된 JSON 문서 객체.
+        Raises:
+            FileNotFoundError: 설정 파일이 존재하지 않을 때 발생한다.
+            ValueError: JSON 문법이 올바르지 않을 때 발생한다.
+        """
+        full_path = (self.config_dir / file_name).resolve()
+        cached = self._json_cache.get(full_path)
+        if cached is not None:
+            return cached
+
+        loaded = load_json_file(full_path)
+        self._json_cache[full_path] = loaded
+        return loaded
+
+    def _validate_static_configs(self) -> None:
+        """
+        초기화 시 모드별 정적 설정 파일을 1회 사전검증한다.
+        Args:
+            없음.
+        Raises:
+            ValueError: 스키마 불일치, 키 호환 불일치가 있으면 발생한다.
+            FileNotFoundError: 필수 설정 파일이 없으면 발생한다.
+        """
+        for _mode_name, mode_rule in MODE_RULES.items():
+            base_file_name = mode_rule["base"]
+            base_doc = self._load_json_cached(base_file_name)
+            base_prompts = self._normalize_prompt_structure(
+                doc=base_doc,
+                file_name=base_file_name,
+                require_command=True,
+                require_constraints=True,
+            )
+
+            merged_probe = self._clone_normalized_prompts(base_prompts)
+            for source_file_name in mode_rule["sources"]:
+                source_doc = self._load_json_cached(source_file_name)
+                source_prompts = self._normalize_prompt_structure(
+                    doc=source_doc,
+                    file_name=source_file_name,
+                    require_command=False,
+                    require_constraints=True,
+                )
+                self._merge_prompt_block(
+                    base_prompts=merged_probe,
+                    source_prompts=source_prompts,
+                    base_file_name=base_file_name,
+                    source_file_name=source_file_name,
+                )
+
+            if not mode_rule["use_vfx"]:
+                continue
+
+            vfx_doc = self._load_json_cached("VFX_prompt.json")
+            vfx_prompts = self._normalize_prompt_structure(
+                doc=vfx_doc,
+                file_name="VFX_prompt.json",
+                require_command=False,
+                require_constraints=True,
+            )
+            for option in VFX_OPTION_TO_CONSTRAINT_KEY:
+                probe_variables = {"HAIR_COLOR": "tmp", "EYE_COLOR": "tmp"} if option == "color_palette" else {}
+                selected_vfx = self._build_vfx_overlay(
+                    vfx_prompts=vfx_prompts,
+                    vfx_options=[option],
+                    variables=probe_variables,
+                )
+                self._merge_prompt_block(
+                    base_prompts=self._clone_normalized_prompts(base_prompts),
+                    source_prompts=selected_vfx,
+                    base_file_name=base_file_name,
+                    source_file_name="VFX_prompt.json",
+                )
+
+    def _clone_normalized_prompts(self, source: NormalizedPrompts) -> NormalizedPrompts:
+        """
+        정규화 프롬프트를 병합 검증용으로 깊은 복제한다.
+        Args:
+            source: 복제할 정규화 프롬프트.
+        Returns:
+            NormalizedPrompts: 내부 리스트/딕셔너리가 분리된 복제 객체.
+        """
+        return NormalizedPrompts(
+            command=[*source.command],
+            crucial_constraints={key: [*values] for key, values in source.crucial_constraints.items()},
+            strictly_avoid=[*source.strictly_avoid],
+        )
+
+    def _normalize_prompt_structure(
         self,
-        vfx_all_prompts: dict[str, Any],
+        doc: dict[str, Any],
+        file_name: str,
+        require_command: bool,
+        require_constraints: bool,
+    ) -> NormalizedPrompts:
+        """
+        단일 프롬프트 문서를 검증하고 병합용 표준 형태로 정규화한다.
+        Args:
+            doc: 로드된 JSON 문서 객체.
+            file_name: 에러 메시지에 포함할 소스 파일명.
+            require_command: Command 키 필수 여부.
+            require_constraints: Crucial Constraints 키 필수 여부.
+        Returns:
+            NormalizedPrompts: 리스트 기반 값으로 통일된 표준 프롬프트 구조.
+        Raises:
+            ValueError: prompts 블록 또는 허용 키 규칙이 올바르지 않을 때 발생한다.
+        """
+        prompts = doc.get("prompts")
+        if not isinstance(prompts, dict):
+            self._raise_value_error(
+                code="E_INVALID_PROMPTS_SECTION",
+                detail=f"{file_name}: 'prompts'는 object(dict)여야 합니다.",
+            )
+
+        allowed_keys = {COMMAND_KEY, CRUCIAL_KEY, STRICTLY_AVOID_KEY}
+        for key in prompts:
+            if key not in allowed_keys:
+                self._raise_value_error(
+                    code="E_UNSUPPORTED_PROMPTS_KEY",
+                    detail=f"{file_name}: 지원하지 않는 prompts 키 '{key}'. 허용 키: {sorted(allowed_keys)}",
+                )
+
+        if require_command and COMMAND_KEY not in prompts:
+            self._raise_value_error(
+                code="E_MISSING_COMMAND",
+                detail=f"{file_name}: 필수 키 '{COMMAND_KEY}'가 없습니다.",
+            )
+        if require_constraints and CRUCIAL_KEY not in prompts:
+            self._raise_value_error(
+                code="E_MISSING_CONSTRAINTS",
+                detail=f"{file_name}: 필수 키 '{CRUCIAL_KEY}'가 없습니다.",
+            )
+
+        strictly_avoid_raw = self._extract_strictly_avoid_raw(prompts=prompts)
+        return NormalizedPrompts(
+            command=self._to_clean_list(prompts.get(COMMAND_KEY, "")),
+            crucial_constraints=self._normalize_constraints(
+                constraints_value=prompts.get(CRUCIAL_KEY, {}),
+                file_name=file_name,
+            ),
+            strictly_avoid=self._to_clean_list(strictly_avoid_raw),
+        )
+
+    def _extract_strictly_avoid_raw(self, prompts: dict[str, Any]) -> Any:
+        """
+        Strictly Avoid 원본 값을 위치 규칙에 따라 추출한다.
+        Args:
+            prompts: 문서 내부의 prompts 블록.
+        Returns:
+            Any: Strictly Avoid 원본 값.
+        """
+        return prompts.get(STRICTLY_AVOID_KEY, "")
+
+    def _normalize_constraints(self, constraints_value: Any, file_name: str) -> dict[str, list[str]]:
+        """
+        Crucial Constraints 값을 리스트 형태로 정규화한다.
+        Args:
+            constraints_value: 원본 constraints 값. 기대 형태는 dict[str, str|list[str]].
+            file_name: 에러 메시지에 포함할 소스 파일명.
+        Returns:
+            dict[str, list[str]]: 각 키가 정리된 문자열 리스트를 갖는 constraints 딕셔너리.
+        Raises:
+            ValueError: constraints 값이 객체(dict)가 아닐 때 발생한다.
+        """
+        if constraints_value is None:
+            return {}
+        if not isinstance(constraints_value, dict):
+            self._raise_value_error(
+                code="E_INVALID_CONSTRAINTS_SECTION",
+                detail=f"{file_name}: '{CRUCIAL_KEY}'는 object(dict)여야 합니다.",
+            )
+
+        normalized: dict[str, list[str]] = {}
+        for key, value in constraints_value.items():
+            normalized[str(key)] = self._to_clean_list(value)
+        return normalized
+
+    def _merge_prompt_block(
+        self,
+        base_prompts: NormalizedPrompts,
+        source_prompts: NormalizedPrompts,
+        base_file_name: str,
+        source_file_name: str,
+    ) -> None:
+        """
+        소스 프롬프트 블록 하나를 base 프롬프트 블록에 병합한다.
+        Args:
+            base_prompts: 병합 대상(가변) 프롬프트 블록.
+            source_prompts: 병합 소스 프롬프트 블록.
+            base_file_name: 키 범위 검증 에러에 사용할 base 파일명.
+            source_file_name: 키 범위 검증 에러에 사용할 source 파일명.
+        Raises:
+            ValueError: source에 base 스키마에 없는 키가 포함되면 발생한다.
+        """
+        if source_prompts.command:
+            base_prompts.command.extend(source_prompts.command)
+
+        if source_prompts.strictly_avoid:
+            base_prompts.strictly_avoid.extend(source_prompts.strictly_avoid)
+
+        base_constraints = base_prompts.crucial_constraints
+        for constraint_key, incoming_values in source_prompts.crucial_constraints.items():
+            if not incoming_values:
+                continue
+            if constraint_key not in base_constraints:
+                self._raise_value_error(
+                    code="E_UNKNOWN_CONSTRAINT_KEY",
+                    detail=(
+                        f"{source_file_name}: constraint key '{constraint_key}'는 "
+                        f"base 파일 {base_file_name}에 존재하지 않습니다."
+                    ),
+                )
+            base_constraints[constraint_key].extend(incoming_values)
+
+    def _apply_user_custom_text(self, user_prompts: NormalizedPrompts, user_custom_text: str | None) -> None:
+        """
+        런타임 사용자 입력으로 user_custom_prompts의 Additions를 덮어쓴다.
+        Args:
+            user_prompts: 표준 형태의 사용자 프롬프트 블록.
+            user_custom_text: 런타임 사용자 입력 문자열. None/빈 문자열은 무시한다.
+        Raises:
+            ValueError: user 프롬프트에 Crucial Constraints 블록이 없을 때 발생한다.
+        """
+        if user_custom_text is None:
+            return
+
+        custom_text = user_custom_text.strip()
+        if not custom_text:
+            return
+
+        user_prompts.crucial_constraints[ADDITIONS_KEY] = [custom_text]
+
+    def _build_vfx_overlay(
+        self,
+        vfx_prompts: NormalizedPrompts,
         vfx_options: list[str],
         variables: dict[str, str],
-    ) -> dict[str, Any]:
+    ) -> NormalizedPrompts:
         """
-        선택한 VFX 옵션에 대응하는 프롬프트만 추출한다.
+        선택된 옵션만 반영한 VFX 전용 프롬프트 블록을 생성한다.
         Args:
-            - vfx_all_prompts: VFX_prompt.json의 prompts 섹션.
-            - vfx_options: 활성화할 VFX 옵션 목록.
-            - variables: 검증에 사용할 치환 변수.
+            vfx_prompts: 표준 형태의 VFX 프롬프트 블록.
+            vfx_options: 요청에서 전달된 VFX 옵션 키 목록.
+            variables: VFX 필수 파라미터 검증에 사용할 플레이스홀더 변수 맵.
         Returns:
-            - dict[str, Any]: 선택된 VFX 프롬프트.
+            NormalizedPrompts: 선택된 VFX constraints만 포함한 표준 프롬프트 블록.
+        Raises:
+            ValueError: 지원하지 않는 VFX 옵션이거나 필수 파라미터가 누락되면 발생한다.
         """
-        if not vfx_options:
-            return {}
+        unique_options = list(dict.fromkeys(vfx_options))
+        if not unique_options:
+            return NormalizedPrompts()
 
-        selected: dict[str, Any] = {}
-        seen_options: set[str] = set()
-
-        for option in vfx_options:
-            if option in seen_options:
-                continue
-            seen_options.add(option)
-
-            if option not in OPTIONAL_VFX_KEYS:
-                raise ValueError(
-                    f"Unsupported vfx option: {option}. Allowed: {list(OPTIONAL_VFX_KEYS)}"
+        selected_constraints: dict[str, list[str]] = {}
+        for option in unique_options:
+            constraint_key = VFX_OPTION_TO_CONSTRAINT_KEY.get(option)
+            if constraint_key is None:
+                allowed = ", ".join(sorted(VFX_OPTION_TO_CONSTRAINT_KEY))
+                self._raise_value_error(
+                    code="E_UNSUPPORTED_VFX_OPTION",
+                    detail=f"지원하지 않는 vfx option='{option}'. 허용값: {allowed}",
                 )
 
             if option == "color_palette":
                 self._validate_color_palette_inputs(variables)
 
-            json_key = VFX_OPTION_KEY_MAP[option]
-            if json_key in vfx_all_prompts:
-                selected[json_key] = vfx_all_prompts[json_key]
+            incoming_values = self._to_clean_list(vfx_prompts.crucial_constraints.get(constraint_key, []))
+            if incoming_values:
+                selected_constraints[constraint_key] = incoming_values
 
-        return selected
+        return NormalizedPrompts(crucial_constraints=selected_constraints)
 
-    def _apply_user_custom_text(self, user_custom_data: dict[str, Any], user_custom_text: str | None) -> None:
+    def _to_prompt_text(self, merged_prompts: NormalizedPrompts) -> str:
         """
-        사용자 커스텀 텍스트를 Additions 항목에 반영한다.
+        표준 병합 프롬프트를 최종 문자열 포맷으로 렌더링한다.
         Args:
-            - user_custom_data: user_custom_prompts.json 데이터.
-            - user_custom_text: 사용자 추가 텍스트.
-        """
-        if user_custom_text is None:
-            return
-
-        text = user_custom_text.strip()
-        if not text:
-            return
-
-        prompts = user_custom_data.setdefault("prompts", {})
-        prompts[USER_CUSTOM_ADDITIONS_KEY] = text
-
-    def _merge_prompt_sections(self, target_prompts: dict[str, Any], source_prompts: dict[str, Any]) -> dict[str, Any]:
-        """
-        prompt 섹션을 규칙에 맞게 병합한다.
-        Args:
-            - target_prompts: 병합 대상 prompt 딕셔너리.
-            - source_prompts: 병합할 source prompt 딕셔너리.
+            merged_prompts: 병합 완료된 정규화 프롬프트 블록.
         Returns:
-            - dict[str, Any]: 병합된 prompt 딕셔너리.
+            str: Command / Crucial Constraints / Strictly Avoid 순서의 최종 프롬프트 문자열.
         """
-        for key, source_value in source_prompts.items():
-            if self._is_empty_prompt_value(source_value):
-                continue
-
-            if key in target_prompts:
-                target_prompts[key] = self._merge_prompt_value(key, target_prompts[key], source_value)
-            else:
-                target_prompts = self._insert_after_last_crucial_constraint(target_prompts, key, source_value)
-
-        return target_prompts
-
-    def _merge_prompt_value(self, key: str, base_value: Any, incoming_value: Any) -> Any:
-        """
-        동일 prompt 키의 값을 병합한다.
-        Args:
-            - key: 병합 키.
-            - base_value: 기존 값.
-            - incoming_value: 신규 값.
-        Returns:
-            - Any: 병합된 값.
-        """
-        if key == COMMAND_KEY:
-            base_text = self._coerce_prompt_text(base_value)
-            incoming_text = self._coerce_prompt_text(incoming_value)
-            if not base_text:
-                return incoming_text
-            if not incoming_text:
-                return base_text
-            return f"{base_text} {incoming_text}".strip()
-
-        base_list = self._coerce_prompt_list(base_value)
-        incoming_list = self._coerce_prompt_list(incoming_value)
-        return [*base_list, *incoming_list]
-
-    def _insert_after_last_crucial_constraint(
-        self,
-        prompts: dict[str, Any],
-        new_key: str,
-        new_value: Any,
-    ) -> dict[str, Any]:
-        """
-        신규 키를 마지막 Crucial Constraints 키 뒤에 삽입한다.
-        Args:
-            - prompts: 기존 prompt 딕셔너리.
-            - new_key: 삽입할 키.
-            - new_value: 삽입할 값.
-        Returns:
-            - dict[str, Any]: 삽입이 반영된 딕셔너리.
-        """
-        items = list(prompts.items())
-        insert_index = len(items)
-
-        for index, (key, _value) in enumerate(items):
-            if isinstance(key, str) and key.startswith(CRUCIAL_PREFIX):
-                insert_index = index + 1
-
-        items.insert(insert_index, (new_key, new_value))
-        return dict(items)
-
-    def _merge_negative_sections(self, target_negative: dict[str, Any], source_negative: dict[str, Any]) -> None:
-        """
-        negative_prompts 섹션을 문자열 기준으로 병합한다.
-        Args:
-            - target_negative: 병합 대상 negative 딕셔너리.
-            - source_negative: 병합할 source negative 딕셔너리.
-        """
-        if not isinstance(source_negative, dict):
-            return
-
-        for key, value in source_negative.items():
-            if value is None:
-                continue
-            incoming_text = str(value).strip()
-            if not incoming_text:
-                continue
-            base_text = str(target_negative.get(key, "")).strip()
-            target_negative[key] = f"{base_text}, {incoming_text}" if base_text else incoming_text
-
-    def _generate_prompt_text(self, merged: dict[str, Any]) -> str:
-        """
-        병합 결과를 최종 텍스트 프롬프트로 직렬화한다.
-        Args:
-            - merged: 병합된 프롬프트 데이터.
-        Returns:
-            - str: 최종 프롬프트 문자열.
-        """
-        prompts = merged.get("prompts", {})
-        negative_text = ""
-        negative_section = merged.get(NEGATIVE_SECTION_KEY, {})
-        if isinstance(negative_section, dict):
-            negative_text = str(negative_section.get(NEGATIVE_STRICT_KEY, "")).strip()
-
         blocks: list[str] = []
 
-        for key, raw_value in prompts.items():
-            if self._is_empty_prompt_value(raw_value):
+        command_value = " ".join(merged_prompts.command).strip()
+        if command_value:
+            blocks.append(f"{COMMAND_KEY}: {command_value}")
+
+        lines: list[str] = []
+        for key, values in merged_prompts.crucial_constraints.items():
+            cleaned_values = self._to_clean_list(values)
+            if not cleaned_values:
                 continue
+            lines.append(f"- {key}: {', '.join(cleaned_values)}")
+        if lines:
+            blocks.append(f"{CRUCIAL_KEY}:\n" + "\n".join(lines))
 
-            if key == COMMAND_KEY:
-                command_text = self._coerce_prompt_text(raw_value)
-                if command_text:
-                    blocks.append(f"{COMMAND_KEY}: {command_text}")
-                continue
-
-            if isinstance(key, str) and key.startswith(CRUCIAL_PREFIX):
-                lines = self._coerce_prompt_list(raw_value)
-                if not lines:
-                    continue
-                blocks.append(f"{key}:\n" + "\n".join(lines))
-                continue
-
-            if isinstance(raw_value, list):
-                lines = self._coerce_prompt_list(raw_value)
-                if not lines:
-                    continue
-                blocks.append(f"{key}:\n" + "\n".join(lines))
-                continue
-
-            text = self._coerce_prompt_text(raw_value)
-            if text:
-                blocks.append(f"{key}: {text}")
-
-        if negative_text:
-            blocks.append(f"{NEGATIVE_SECTION_KEY}({NEGATIVE_STRICT_KEY}):{negative_text}")
+        strictly_avoid_value = ", ".join(merged_prompts.strictly_avoid).strip()
+        if strictly_avoid_value:
+            blocks.append(f"{STRICTLY_AVOID_KEY}: {strictly_avoid_value}")
 
         return "\n\n".join(blocks).strip()
 
-    def _map_prompt_text(self, text: str, variables: dict[str, str]) -> str:
+    def _map_prompt_values(self, text: str, variables: dict[str, str]) -> str:
         """
-        [KEY] 플레이스홀더를 변수 값으로 1:1 치환한다.
+        [PLACEHOLDER] 토큰을 전달된 변수값으로 치환한다.
         Args:
-            - text: 치환 전 텍스트.
-            - variables: 치환 변수.
+            text: 치환 전 프롬프트 문자열.
+            variables: 플레이스홀더 매핑 값. KEY와 [KEY] 스타일을 모두 지원한다.
         Returns:
-            - str: 치환된 텍스트.
+            str: 플레이스홀더 치환이 완료된 문자열.
         """
-        for key, value in variables.items():
-            placeholder = key if key.startswith("[") else f"[{key}]"
-            text = text.replace(placeholder, str(value))
-        return text
+        normalized_variables: dict[str, str] = {}
+        for raw_key, raw_value in variables.items():
+            key_text = str(raw_key).strip()
+            if key_text.startswith("[") and key_text.endswith("]") and len(key_text) > 2:
+                key_text = key_text[1:-1].strip()
+            if not key_text:
+                continue
+            normalized_variables[key_text] = str(raw_value)
+
+        def _replace(match: re.Match[str]) -> str:
+            token = match.group(1)
+            if token in normalized_variables:
+                return normalized_variables[token]
+            if token in SUPPORTED_PLACEHOLDER_KEYS:
+                return match.group(0)
+            return match.group(0)
+
+        return PLACEHOLDER_PATTERN.sub(_replace, text)
 
     def _validate_color_palette_inputs(self, variables: dict[str, str]) -> None:
         """
-        color_palette 옵션의 필수 변수를 검증한다.
+        color_palette VFX에 필요한 필수 변수를 검증한다.
         Args:
-            - variables: 치환 변수.
+            variables: 플레이스홀더 치환 변수 맵.
+        Raises:
+            ValueError: HAIR_COLOR 또는 EYE_COLOR가 비어 있거나 누락되면 발생한다.
         """
         required_keys = ("HAIR_COLOR", "EYE_COLOR")
-        missing = [key for key in required_keys if not variables.get(key)]
+        missing = [key for key in required_keys if not str(variables.get(key, "")).strip()]
         if missing:
-            raise ValueError(f"color_palette requires {', '.join(required_keys)} in vfx_params")
+            self._raise_value_error(
+                code="E_MISSING_COLOR_PALETTE_PARAMS",
+                detail="color_palette 사용 시 HAIR_COLOR, EYE_COLOR가 모두 필요합니다.",
+            )
 
-    def _is_empty_prompt_value(self, value: Any) -> bool:
+    def _to_clean_list(self, value: Any) -> list[str]:
         """
-        프롬프트 값이 비었는지 확인한다.
+        스칼라/리스트 입력을 공백 제거된 문자열 리스트로 변환하고 빈 값은 제거한다.
         Args:
-            - value: 확인 대상 값.
+            value: str | list[Any] | None 형태의 입력값.
         Returns:
-            - bool: 비었으면 True.
+            list[str]: 정리된 비어 있지 않은 문자열 리스트.
         """
         if value is None:
-            return True
-        if isinstance(value, str):
-            return value.strip() == ""
+            return []
         if isinstance(value, list):
-            return len([v for v in value if str(v).strip()]) == 0
-        return False
-
-    def _coerce_prompt_list(self, value: Any) -> list[str]:
-        """
-        입력값을 문자열 리스트로 정규화한다.
-        Args:
-            - value: 정규화 대상 값.
-        Returns:
-            - list[str]: 정규화된 문자열 리스트.
-        """
-        if isinstance(value, list):
-            return [str(v).strip() for v in value if str(v).strip()]
-        text = self._coerce_prompt_text(value)
+            return [str(item).strip() for item in value if str(item).strip()]
+        text = str(value).strip()
         return [text] if text else []
-
-    def _coerce_prompt_text(self, value: Any) -> str:
-        """
-        입력값을 단일 문자열로 정규화한다.
-        Args:
-            - value: 정규화 대상 값.
-        Returns:
-            - str: 정규화된 문자열.
-        """
-        if value is None:
-            return ""
-        if isinstance(value, list):
-            return " ".join(str(v).strip() for v in value if str(v).strip()).strip()
-        return str(value).strip()
