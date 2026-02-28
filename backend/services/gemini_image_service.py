@@ -8,8 +8,8 @@
 
 
 from __future__ import annotations
-from typing import Any, NoReturn
-from .gemini_response_observer import GeminiResponseObserver
+from typing import NoReturn
+from .gemini_response_observer import GeminiResponseObserver, ResponseSummary
 
 
 ERROR_NAMESPACE = "GEMINI_IMAGE_SERVICE"
@@ -46,16 +46,16 @@ class GeminiImageService:
         """
         raise RuntimeError(f"[{ERROR_NAMESPACE}:{code}] {detail}")
 
-    def generate_image(self, contents: list[object], config: Any) -> tuple[bytes, dict[str, Any]]:
+    def generate_image(self, contents: list[object], config: object) -> tuple[bytes, ResponseSummary]:
         """
         완성된 입력(contents/config)으로 Gemini를 호출하고 이미지 바이트를 반환한다.
         Args:
             contents: list[object]: 텍스트/이미지 Part가 조합된 멀티모달 입력 목록.
-            config: Any: google.genai.types.GenerateContentConfig 객체.
+            config: object: google.genai.types.GenerateContentConfig 호환 객체.
         Returns:
-            tuple[bytes, dict[str, Any]]:
+            tuple[bytes, ResponseSummary]:
                 - bytes: 응답에서 추출한 첫 번째 inline image 바이트.
-                - dict[str, Any]: 응답 관측성 요약 정보.
+                - ResponseSummary: 응답 관측성 요약 정보.
         Raises:
             RuntimeError: API 키 누락, SDK 미설치, inline 이미지 부재 시 발생한다.
         """
