@@ -6,8 +6,8 @@
 하위 모듈: 없음
 """
 
-from __future__ import annotations
 
+from __future__ import annotations
 import re
 from typing import Protocol, TypedDict
 
