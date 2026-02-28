@@ -38,6 +38,8 @@ FIXED_SAFETY_SETTINGS: tuple[SafetySettingPolicy, ...] = (
     {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
     {"category": "HARM_CATEGORY_CIVIC_INTEGRITY", "threshold": "BLOCK_NONE"},
 )
+
+
 # 기본 image_config 정책
 DEFAULT_IMAGE_CONFIG_POLICY: ImageConfigPolicy = {
     "aspect_ratio": "AUTO",  # AUTO 또는 SUPPORTED_ASPECT_RATIOS
@@ -47,7 +49,10 @@ DEFAULT_IMAGE_CONFIG_POLICY: ImageConfigPolicy = {
 MODE_IMAGE_CONFIG_OVERRIDES: dict[str, ImageConfigPolicy] = {
     "mode1_general_trans.json": {},
     "mode2_face_consistency.json": {},
-    "mode3_master_image.json": {},
+    "mode3_master_image.json": {
+        "aspect_ratio": "3:4",
+        "image_size": "1K",
+    },
 }
 
 
