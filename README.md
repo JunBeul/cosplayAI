@@ -57,9 +57,7 @@ CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 
 - [x] 기획
 - [x] 프롬프트 설계 기반 구축
-  - [ ] mode3 프롬프트 구축
 - [x] 백엔드 코어 로직 구현
-  - [ ] mode3는 로직 구현
 - [x] AI 모델 연동 구현
 - [x] API 서버 / 로컬 실행 도구 구성
 - [ ] 생성 품질 개선 및 프롬프트 튜닝
@@ -102,26 +100,30 @@ CosplayAI는 다음과 같은 사용자 경험을 목표로 합니다.
 
 <br />
 
-| 분류        | 문서                                                                                      | 설명                                           |
-| ----------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| 개발 온보딩 | [`README_DEV.md`](README_DEV.md)                                                          | 개발 환경 설정, CLI/API 실행 방법, 트러블슈팅  |
-| 개발        | [`dev_API_SPEC.md`](docs/dev_API_SPEC.md)                                                 | 요청/응답 형식 및 엔드포인트 설명              |
-| 개발        | [`dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)                               | 현재 프로젝트 구조와 모듈 역할 설명            |
-| 개발        | [`dev_REQUIREMENTS_MANAGEMENT.md`](docs/dev_REQUIREMENTS_MANAGEMENT.md)                   | `requirements.txt` 관리 기준                   |
-| 개발        | [`dev_DOCUMENTATION_GUIDE.md`](docs/dev_DOCUMENTATION_GUIDE.md)                           | 문서 작성 가이드                               |
-| 개발        | [`dev_BRANCH_GUIDE.md`](docs/dev_BRANCH_GUIDE.md)                                         | 브랜치 운영 기준 가이드                        |
-| 개발        | [`dev_COMMIT_MESSAGE_GUIDE.md`](docs/dev_COMMIT_MESSAGE_GUIDE.md)                         | 커밋 타입 규칙 및 메시지 작성 가이드           |
-| 개발        | [`dev_PYTHON_COMMENT_GUIDE.md`](docs/dev_PYTHON_COMMENT_GUIDE.md)                         | 파이썬 주석 작성 가이드                        |
-| 이슈        | [`issues_img_reference_order.md`](docs/issues_img_reference_order.md)                     | 이미지 입력 순서에 따른 전달 이슈              |
-| 이슈        | [`issues_gemini_safety_category_compat.md`](docs/issues_gemini_safety_category_compat.md) | `safety_settings.category` 호환성 이슈         |
-| 이슈        | [`issues_no_inline_image_data_runbook.md`](docs/issues_no_inline_image_data_runbook.md)   | `no inline image data` 대응 Runbook            |
-| 이슈        | [`issues_response_observability.md`](docs/issues_response_observability.md)               | Gemini 응답 관측성 이슈 정리                   |
-| 이슈        | [`issues_prompt_assembly_contract.md`](docs/issues_prompt_assembly_contract.md)           | 멀티이미지 프롬프트 조립 규약                  |
-| 학습        | [`study_gemini_api_parameters.md`](docs/study_gemini_api_parameters.md)                   | 이미지 생성 파라미터 정리, 있는 적용 후보 기록 |
-|             |                                                                                           |                                                |
-| 개발        | [`dev_*`]()                                                                               | 개발 문서 추가 포멧                            |
-| 이슈        | [`issues_*`]()                                                                            | 이슈 문서 추가 포멧                            |
-| 학습        | [`study_*`]()                                                                             | 학습 문서 추가 포멧                            |
+| 분류        | 문서                                                                                          | 설명                                           |
+| ----------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 개발 온보딩 | [`README_DEV.md`](README_DEV.md)                                                              | 개발 환경 설정, CLI/API 실행 방법, 트러블슈팅  |
+| 개발        | [`dev_API_SPEC.md`](docs/dev_API_SPEC.md)                                                     | 요청/응답 형식 및 엔드포인트 설명              |
+| 개발        | [`dev_PROJECT_STRUCTURE.md`](docs/dev_PROJECT_STRUCTURE.md)                                   | 현재 프로젝트 구조와 모듈 역할 설명            |
+| 개발        | [`dev_REQUIREMENTS_MANAGEMENT.md`](docs/dev_REQUIREMENTS_MANAGEMENT.md)                       | `requirements.txt` 관리 기준                   |
+| 개발        | [`dev_DOCUMENTATION_GUIDE.md`](docs/dev_DOCUMENTATION_GUIDE.md)                               | 문서 작성 가이드                               |
+| 개발        | [`dev_BRANCH_GUIDE.md`](docs/dev_BRANCH_GUIDE.md)                                             | 브랜치 운영 기준 가이드                        |
+| 개발        | [`dev_COMMIT_MESSAGE_GUIDE.md`](docs/dev_COMMIT_MESSAGE_GUIDE.md)                             | 커밋 타입 규칙 및 메시지 작성 가이드           |
+| 개발        | [`dev_PYTHON_COMMENT_GUIDE.md`](docs/dev_PYTHON_COMMENT_GUIDE.md)                             | 파이썬 주석 작성 가이드                        |
+| 이슈        | [`issues_img_reference_order.md`](docs/issues_img_reference_order.md)                         | 이미지 입력 순서에 따른 전달 이슈              |
+| 이슈        | [`issues_gemini_safety_category_compat.md`](docs/issues_gemini_safety_category_compat.md)     | `safety_settings.category` 호환성 이슈         |
+| 이슈        | [`issues_no_inline_image_data_runbook.md`](docs/issues_no_inline_image_data_runbook.md)       | `no inline image data` 대응 Runbook            |
+| 이슈        | [`issues_response_observability.md`](docs/issues_response_observability.md)                   | Gemini 응답 관측성 이슈 정리                   |
+| 이슈        | [`issues_gemini_service_observer_split.md`](docs/issues_gemini_service_observer_split.md)     | Gemini 호출 책임 분리 및 observer 정책 강화    |
+| 이슈        | [`issues_gemini_parameter_resolver_split.md`](docs/issues_gemini_parameter_resolver_split.md) | Gemini 파라미터 resolver 분리 이유 및 기준     |
+| 이슈        | [`issues_pipeline_refactor.md`](docs/issues_pipeline_refactor.md)                             | 파이프라인 재구성 및 모드별 입력 순서 고정     |
+| 이슈        | [`issues_prompt_assembly_contract.md`](docs/issues_prompt_assembly_contract.md)               | 멀티이미지 프롬프트 조립 규약                  |
+| 이슈        | [`issues_temp_prompt_builder_refactor.md`](docs/issues_temp_prompt_builder_refactor.md)       | prompt builder 구조 개선/검증 이슈 정리        |
+| 학습        | [`study_gemini_api_parameters.md`](docs/study_gemini_api_parameters.md)                       | 이미지 생성 파라미터 정리, 있는 적용 후보 기록 |
+|             |                                                                                               |                                                |
+| 개발        | [`dev_*`]()                                                                                   | 개발 문서 추가 포멧                            |
+| 이슈        | [`issues_*`]()                                                                                | 이슈 문서 추가 포멧                            |
+| 학습        | [`study_*`]()                                                                                 | 학습 문서 추가 포멧                            |
 
 </details>
 

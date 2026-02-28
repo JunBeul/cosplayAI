@@ -64,6 +64,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     master = subparsers.add_parser("master-image", help="Person photo -> master image")
     master.add_argument("--person-image-path", required=True)
+    master.add_argument("--user-custom-text", help="Optional custom prompt text (Additions)")
     master.add_argument("--output-filename")
     master.add_argument("--dry-run", action="store_true")
 
@@ -111,6 +112,7 @@ def main() -> int:
         result = pipeline.generate_master_image(
             MasterImageRequest(
                 person_image_path=args.person_image_path,
+                user_custom_text=args.user_custom_text,
                 output_filename=args.output_filename,
                 dry_run=args.dry_run,
             )

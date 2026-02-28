@@ -1,0 +1,4 @@
+﻿{
+  "exclude": [".legacy"],
+  "ignore": [".legacy"]
+}

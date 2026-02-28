@@ -6,8 +6,8 @@
   },
   "prompts": {
     "Command": "Take a very realistic cosplay photo of a girl dressed as a character in a [REFERENCE_IMG]. A cute Korean cosplayer who looks like a K-pop girl idol.",
-    "Crucial Constraints": {
-      "Realistic Body Proportions": "Appearance Criteria: A youthful, cute appearance with a short lower facial structure (baby face)."
-    }
+    "Crucial Constraints - Realistic Body Proportions": [
+      "- Appearance Criteria: A youthful, cute appearance with a short lower facial structure (baby face)."
+    ]
   }
 }

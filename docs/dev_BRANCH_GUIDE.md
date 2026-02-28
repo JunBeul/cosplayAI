@@ -65,19 +65,17 @@ feature/update-api-docs
 git switch main
 git pull origin main
 
-git switch -c feature/add-face-consistency-option
+git switch -c feature/your-brunch-name
 # 작업 + 커밋
 
-git push -u origin feature/add-face-consistency-option
+git push -u origin feature/your-brunch-name
 # GitHub에서 PR 생성 (base: main)
 
 git switch main
 git pull origin main
-git branch -d feature/add-face-consistency-option
-git push origin --delete feature/add-face-consistency-option
+git branch -d feature/your-brunch-name
+git push origin --delete feature/your-brunch-name
 ```
-
-기본 브랜치가 `master`인 저장소라면 위 명령의 `main`을 `master`로 바꿔 사용한다.
 
 ---
 
