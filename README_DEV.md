@@ -76,8 +76,6 @@ python -m backend.cli cosplay-with-master --illustration-path inputs/references/
 python -m backend.cli master-image --person-image-path upload/your/image.png
 ```
 
-현재 `prompt_builder.py`의 `build_for_master_image()`가 미구현이므로 실패 응답이 반환됩니다.
-
 ### 기능 4: 프롬프트 확인용 `dry-run` 사용
 
 실제 이미지 생성 API 호출 없이 프롬프트/메타데이터만 저장하려면 `--dry-run`을 사용합니다.
