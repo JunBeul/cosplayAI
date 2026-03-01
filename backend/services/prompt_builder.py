@@ -25,12 +25,16 @@ VFX_OPTION_TO_CONSTRAINT_KEY = {
     "animal_features": "Animal Features",
     "halo_vfx": "Halo VFX",
     "color_palette": "Styling",
+    "combat_props": "Combat Props",
+    "wig_props": "Wig Props",
 }
 SUPPORTED_PLACEHOLDER_KEYS = {
     "REFERENCE_IMG",
     "MASTER_IMG",
     "HAIR_COLOR",
     "EYE_COLOR",
+    "COMBAT_PROP_ITEMS",
+    "WIG_PROP_ITEMS",
     "PERSON_IMG",
     "CHARACTER_NAME",
 }
@@ -117,7 +121,8 @@ class PromptBuilder:
         Args:
             mode_config_name: MODE_RULES에 등록된 모드 파일명 키.
             variables: 플레이스홀더 치환 변수. 예: REFERENCE_IMG.
-            vfx_options: 활성화할 VFX 옵션 목록. 허용값: animal_features, halo_vfx, color_palette.
+            vfx_options: 활성화할 VFX 옵션 목록.
+                허용값: animal_features, halo_vfx, color_palette, combat_props, wig_props.
             vfx_params: VFX 전용 추가 치환 변수.
             user_custom_text: user_custom_prompts의 Additions를 덮어쓸 사용자 입력 문자열.
         Returns:
@@ -283,7 +288,13 @@ class PromptBuilder:
                 require_constraints=True,
             )
             for option in VFX_OPTION_TO_CONSTRAINT_KEY:
-                probe_variables = {"HAIR_COLOR": "tmp", "EYE_COLOR": "tmp"} if option == "color_palette" else {}
+                probe_variables: dict[str, str] = {}
+                if option == "color_palette":
+                    probe_variables = {"HAIR_COLOR": "tmp", "EYE_COLOR": "tmp"}
+                elif option == "combat_props":
+                    probe_variables = {"COMBAT_PROP_ITEMS": "Pistol"}
+                elif option == "wig_props":
+                    probe_variables = {"WIG_PROP_ITEMS": "Angel wings"}
                 selected_vfx = self._build_vfx_overlay(
                     vfx_prompts=vfx_prompts,
                     vfx_options=[option],
@@ -487,6 +498,10 @@ class PromptBuilder:
 
             if option == "color_palette":
                 self._validate_color_palette_inputs(variables)
+            elif option == "combat_props":
+                self._validate_combat_prop_inputs(variables)
+            elif option == "wig_props":
+                self._validate_wig_prop_inputs(variables)
 
             incoming_values = self._to_clean_list(vfx_prompts.crucial_constraints.get(constraint_key, []))
             if incoming_values:
@@ -565,6 +580,34 @@ class PromptBuilder:
             self._raise_value_error(
                 code="E_MISSING_COLOR_PALETTE_PARAMS",
                 detail="color_palette 사용 시 HAIR_COLOR, EYE_COLOR가 모두 필요합니다.",
+            )
+
+    def _validate_combat_prop_inputs(self, variables: dict[str, str]) -> None:
+        """
+        combat_props VFX에 필요한 필수 변수를 검증한다.
+        Args:
+            variables: 플레이스홀더 치환 변수 맵.
+        Raises:
+            ValueError: COMBAT_PROP_ITEMS가 비어 있거나 누락되면 발생한다.
+        """
+        if not str(variables.get("COMBAT_PROP_ITEMS", "")).strip():
+            self._raise_value_error(
+                code="E_MISSING_COMBAT_PROP_ITEMS",
+                detail="combat_props 사용 시 COMBAT_PROP_ITEMS가 필요합니다.",
+            )
+
+    def _validate_wig_prop_inputs(self, variables: dict[str, str]) -> None:
+        """
+        wig_props VFX에 필요한 필수 변수를 검증한다.
+        Args:
+            variables: 플레이스홀더 치환 변수 맵.
+        Raises:
+            ValueError: WIG_PROP_ITEMS가 비어 있거나 누락되면 발생한다.
+        """
+        if not str(variables.get("WIG_PROP_ITEMS", "")).strip():
+            self._raise_value_error(
+                code="E_MISSING_WIG_PROP_ITEMS",
+                detail="wig_props 사용 시 WIG_PROP_ITEMS가 필요합니다.",
             )
 
     def _to_clean_list(self, value: Any) -> list[str]:
