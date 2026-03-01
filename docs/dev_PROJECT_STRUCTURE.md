@@ -2,7 +2,7 @@
 
 이 문서는 저장소의 디렉터리 구조, 계층별 책임, 실행 흐름, 생성물 위치를 개발자 관점에서 정리한 문서입니다.
 
-**작성일 : 2026-02-28**
+**작성일 : 2026-03-01**
 
 ---
 
@@ -53,6 +53,7 @@ CosplayAI/
 │  ├─ mode3_master_image.json
 │  ├─ user_custom_prompts.json
 │  ├─ VFX_prompt.json
+│  ├─ props_catalog.json
 │  └─ _variables_manage.txt
 ├─ docs/                               # 개발/이슈/학습 문서
 │  ├─ dev_API_SPEC.md
@@ -122,7 +123,7 @@ CosplayAI/
 - `backend/services/prompt_builder.py`
   - 모드별 규칙(`MODE_RULES`)에 따라 JSON 프롬프트 병합
   - 정적 검증(키/스키마/모드/VFX 옵션) 수행
-  - 플레이스홀더 치환: `REFERENCE_IMG`, `MASTER_IMG`, `PERSON_IMG`, `HAIR_COLOR`, `EYE_COLOR`, `CHARACTER_NAME`
+  - 플레이스홀더 치환: `REFERENCE_IMG`, `MASTER_IMG`, `PERSON_IMG`, `HAIR_COLOR`, `EYE_COLOR`, `COMBAT_PROP_ITEMS`, `WIG_PROP_ITEMS`, `CHARACTER_NAME`
   - mode1/mode2는 VFX 병합 사용, mode3는 VFX 병합 미사용(`use_vfx=False`)
 
 - `backend/services/gemini_parameter_resolver.py`
@@ -189,11 +190,15 @@ CosplayAI/
   - `--halo-vfx`
   - `--hair-color`
   - `--eye-color`
+  - `--combat-prop` (반복 입력 가능)
+  - `--wig-prop` (반복 입력 가능)
 
 주의:
 
 - `--hair-color`와 `--eye-color`는 함께 입력해야 함
 - 하나만 전달 시 CLI가 즉시 에러 반환
+- `--combat-prop`, `--wig-prop`는 `configs/props_catalog.json`의 key만 허용
+- `--combat-prop`, `--wig-prop`는 중복 key 입력 시 자동 제거(입력 순서 유지)
 
 ---
 
@@ -245,6 +250,14 @@ CosplayAI/
     - `animal_features`
     - `halo_vfx`
     - `color_palette` (`HAIR_COLOR`, `EYE_COLOR` 필요)
+    - `combat_props` (`COMBAT_PROP_ITEMS` 필요)
+    - `wig_props` (`WIG_PROP_ITEMS` 필요)
+
+- `configs/props_catalog.json`
+  - 선택형 소품 key를 label로 매핑하는 카탈로그
+  - 섹션
+    - `combat_props`
+    - `wig_props`
 
 ---
 

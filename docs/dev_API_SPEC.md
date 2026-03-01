@@ -2,7 +2,7 @@
 
 이 문서는 현재 Python 백엔드 프로토타입의 API 명세입니다.
 
-**작성일 : 2026-02-28**
+**작성일 : 2026-03-01**
 
 ---
 
@@ -113,10 +113,12 @@
     "CHARACTER_NAME": "Iroha"
   },
   "user_custom_text": "Use soft rim light and slightly wider framing.",
-  "vfx_options": ["animal_features", "halo_vfx", "color_palette"],
+  "vfx_options": ["animal_features", "halo_vfx", "color_palette", "combat_props", "wig_props"],
   "vfx_params": {
     "HAIR_COLOR": "blue",
-    "EYE_COLOR": "gold"
+    "EYE_COLOR": "gold",
+    "COMBAT_PROP_ITEMS": "Pistol, Shield",
+    "WIG_PROP_ITEMS": "천사 날개"
   },
   "output_filename": null,
   "dry_run": false
@@ -128,8 +130,11 @@
 - `illustration_path` (필수): 서버에서 접근 가능한 일러스트 이미지 경로
 - `prompt_variables` (선택): 템플릿 치환값
 - `user_custom_text` (선택): 사용자 커스텀 문장
-- `vfx_options` (선택): `animal_features`, `halo_vfx`, `color_palette`
-- `vfx_params` (선택): `color_palette` 사용 시 `HAIR_COLOR`, `EYE_COLOR` 필요
+- `vfx_options` (선택): `animal_features`, `halo_vfx`, `color_palette`, `combat_props`, `wig_props`
+- `vfx_params` (선택):
+  - `color_palette` 사용 시 `HAIR_COLOR`, `EYE_COLOR` 필요
+  - `combat_props` 사용 시 `COMBAT_PROP_ITEMS` 필요 (예: `Pistol, Shield`)
+  - `wig_props` 사용 시 `WIG_PROP_ITEMS` 필요 (예: `천사 날개`)
 - `output_filename` (선택): 출력 파일명(예: `my_result.png`)
 - `dry_run` (선택): `true`면 모델 호출 없이 메타데이터만 저장
 
@@ -227,6 +232,8 @@
 - `Input image not found: ...`
 - `Unsupported image extension for ...`
 - `[PROMPT_BUILDER:E_MISSING_COLOR_PALETTE_PARAMS] ...`
+- `[PROMPT_BUILDER:E_MISSING_COMBAT_PROP_ITEMS] ...`
+- `[PROMPT_BUILDER:E_MISSING_WIG_PROP_ITEMS] ...`
 - `[GEMINI_IMAGE_SERVICE:E_API_KEY_MISSING] GEMINI_API_KEY is not set`
 - `[GEMINI_IMAGE_SERVICE:E_NO_INLINE_IMAGE_DATA] ...`
 
