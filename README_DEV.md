@@ -92,6 +92,8 @@ python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_ir
 > 주의:
 >
 > - `--hair-color`와 `--eye-color`는 반드시 함께 입력
+> - `--combat-prop`, `--wig-prop`는 `configs/props_catalog.json`에 정의된 key만 허용
+> - `--combat-prop`, `--wig-prop`는 반복 입력 가능하며 중복 key는 자동 제거
 
 | 선택 옵션          | 사용 가능 모드      | 예시                                                                      |
 | ------------------ | ------------------- | ------------------------------------------------------------------------- |
@@ -99,6 +101,8 @@ python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_ir
 | 동물 귀, 꼬리 추가 | mode1, mode2        | `... --animal-features`                                                   |
 | 헤일로 추가        | mode1, mode2        | `... --halo-vfx`                                                          |
 | 눈, 머리 색 추가   | mode1, mode2        | `... --hair-color blue --eye-color gold`                                  |
+| 전투 소품 추가     | mode1, mode2        | `... --combat-prop pistol --combat-prop shield`                           |
+| 날개 소품 추가     | mode1, mode2        | `... --wig-prop angel_wings`                                              |
 
 ---
 

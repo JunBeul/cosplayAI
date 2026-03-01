@@ -1,0 +1,23 @@
+{
+  "file_info": {
+    "version": "1.2",
+    "description": "Selectable prop catalogs for prompt assembly",
+    "updated_at": "2026-03-01"
+  },
+  "combat_props": {
+    "pistol": "Pistol",
+    "shield": "Shield",
+    "sniper_rifle": "Sniper Rifle",
+    "rifle": "Rifle",
+    "katana": "Katana",
+    "longsword": "Longsword",
+    "bow": "Bow",
+    "staff": "Wizard staff",
+    "wand": "Magic wand"
+  },
+  "wig_props": {
+    "angel_wings": "천사 날개",
+    "demon_wings": "악마 날개",
+    "fairy_wings": "요정 날개"
+  }
+}
