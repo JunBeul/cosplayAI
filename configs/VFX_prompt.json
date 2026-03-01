@@ -1,19 +1,25 @@
 {
   "file_info": {
-    "version": "1.0",
+    "version": "1.2",
     "description": "VFX & Special Features - Optional module for supernatural elements and specific color palettes",
-    "updated_at": "2025-12-22"
+    "updated_at": "2026-03-01"
   },
   "prompts": {
     "Crucial Constraints": {
-      "Animal Features": [
-        "If present in [REFERENCE_IMG], recreate animal ears and tails with highly realistic fur textures that seamlessly blend with the character's hair. They should look like natural biological features, not cheap props."
+      "Styling": [
+        "Vividly render [HAIR_COLOR] hair and clear, transparent [EYE_COLOR] pupils as seen in the [REFERENCE_IMG]."
       ],
       "Halo VFX": [
         "If present in [REFERENCE_IMG], render the Halo as a luminous, high-quality CG energy ring. It should have a subtle ethereal glow (bloom effect) and cast realistic ambient light onto the subject's hair and shoulders."
       ],
-      "Styling": [
-        "Vividly render [HAIR_COLOR] hair and clear, transparent [EYE_COLOR] pupils as seen in the [REFERENCE_IMG]."
+      "Animal Features": [
+        "If present in [REFERENCE_IMG], recreate animal ears and tails with highly realistic fur textures that seamlessly blend with the character's hair. They should look like natural biological features, not cheap props."
+      ],
+      "Combat Props": [
+        "[COMBAT_PROP_ITEMS] 들의 소품을 잊지 말고 추가하시오."
+      ],
+      "Wig Props": [
+        "[WIG_PROP_ITEMS] 스타일의 날개 소품을 잊지 말고 추가하시오."
       ]
     }
   }
