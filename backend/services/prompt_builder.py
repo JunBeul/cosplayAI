@@ -528,11 +528,11 @@ class PromptBuilder:
             cleaned_values = self._to_clean_list(values)
             if not cleaned_values:
                 continue
-            lines.append(f"- {key}: {', '.join(cleaned_values)}")
+            lines.append(f"- {key}: {' '.join(cleaned_values)}")
         if lines:
             blocks.append(f"{CRUCIAL_KEY}:\n" + "\n".join(lines))
 
-        strictly_avoid_value = ", ".join(merged_prompts.strictly_avoid).strip()
+        strictly_avoid_value = " ".join(merged_prompts.strictly_avoid).strip()
         if strictly_avoid_value:
             blocks.append(f"{STRICTLY_AVOID_KEY}: {strictly_avoid_value}")
 
