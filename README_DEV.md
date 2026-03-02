@@ -102,7 +102,38 @@ python -m backend.cli cosplay-basic --illustration-path inputs/references/ref_ir
 | 헤일로 추가        | mode1, mode2        | `... --halo-vfx`                                                          |
 | 눈, 머리 색 추가   | mode1, mode2        | `... --hair-color blue --eye-color gold`                                  |
 | 전투 소품 추가     | mode1, mode2        | `... --combat-prop pistol --combat-prop shield`                           |
-| 날개 소품 추가     | mode1, mode2        | `... --wig-prop angel_wings`                                              |
+| 날개 소품 추가     | mode1, mode2        | `... --wig-prop angel-wings`                                              |
+
+<details>
+<summary>전투 소품 (combat-prop) 옵션 종류 보기/숨기기</summary>
+<br />
+
+| 전투 소품 종류 | 옵션 예시                    |
+| -------------- | ---------------------------- |
+| 권총           | `--combat-prop pistol`       |
+| 방패           | `--combat-prop shield`       |
+| 저격총         | `--combat-prop sniper-rifle` |
+| 소총           | `--combat-prop rifle`        |
+| 카타나         | `--combat-prop katana`       |
+| 롱소드         | `--combat-prop longsword`    |
+| 활             | `--combat-prop bow`          |
+| 마법 스태프    | `--combat-prop staff`        |
+| 마법 완드      | `--combat-prop wand`         |
+
+</details>
+
+<details>
+<summary>날개 소품 (wig-prop) 옵션 종류 보기/숨기기</summary>
+<br />
+
+| 날개 소품 종류 | 옵션 예시                 |
+| -------------- | ------------------------- |
+| 천사 날개      | `--wig-prop angel-wings`  |
+| 악마 날개      | `--wig-prop demon-wings`  |
+| 요정 날개      | `--wig-prop fairy-wings`  |
+| 드래곤 날개    | `--wig-prop dragon-wings` |
+
+</details>
 
 ---
 
