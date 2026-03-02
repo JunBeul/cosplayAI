@@ -1,34 +1,37 @@
 {
   "file_info": {
-    "version": "1.3",
+    "version": "2.0",
     "description": "Common base positive prompt module for photorealistic cosplay generation",
-    "updated_at": "2026-03-01"
+    "updated_at": "2026-03-02"
   },
   "prompts": {
     "Command": "",
     "Crucial Constraints": {
-      "Complete Photorealism": [
-        "The output must be an actual portrait photograph taken with a high-resolution camera such as a Sony A7R or Canon EOS R5.",
-        "Maintain a hyper-realistic style where fine skin pores, peach fuzz, skin texture, and individual strands of hair are vividly palpable."
+      "Identity Protection": [],
+      "Appearance & Proportions": [
+        "Apply strict realistic adult female anatomy with natural 8-head fashion model proportions.",
+        "You must make the head proportionally small compared to the torso and shoulder width to achieve a true 8-head or 7.5-head realistic model proportion."
       ],
-      "Realistic Body Proportions": [
-        "Absolute Standard: Apply anatomically correct adult female body proportions and completely ignore the unrealistic head-to-body ratio (anime proportions) present in the [REFERENCE_IMG].",
-        "Head Size Reduction: Generate the subject's head size proportionally significantly smaller relative to her torso and shoulder width, conveying the 8-head or 7.5-head figure ratio of a real model. The head must sit naturally and small upon the shoulders; it must absolutely not appear oversized or like a 'bobblehead.'"
+      "Complete Photorealism": [
+        "The output must be an authentic, unedited RAW portrait photograph captured with a 35mm or 50mm prime lens on a Sony A7R IV.",
+        "Translate the illustration design into a tangible, live-action reality.",
+        "Use sophisticated three-point lighting, natural skin subsurface scattering, and high-frequency skin details (fine pores, micro-creases) to ensure the subject is indistinguishable from a real human being.",
+        "Incorporate subtle optical imperfections such as natural catchlights in the eyes and realistic micro-shadows in the fabric folds to enhance the sense of physical presence.",
+        "Ensure natural micro-shadows under the eyes (aegyosal) and around the nostrils to define the 3D volume of the face, preventing a flat or mask-like appearance."
       ],
       "Facial Expression Transfer": [],
       "Styling": [
-        "Thoroughly analyze and perfectly reproduce the costume design, hairstyle, pose, and camera angle from the [REFERENCE_IMG].",
-        "The materials of the costume must convey the physical textures of actual real-world fabrics (cloth, silk, leather, metal ornaments, etc.)."
-      ],
-      "Background": [
-        "Analyze the background of the [REFERENCE_IMG] and generate the scene as if photographed in a real location possessing a similar atmosphere."
+        "The materials of the costume must convey the rich, physical micro-textures of actual real-world fabrics (e.g., woven cotton, glossy silk, genuine leather, metallic scratches on ornaments)."
       ],
       "Animal Features": [],
       "Combat Props": [],
       "Wig Props": [],
       "Halo VFX": [],
+      "Background": [
+        "Analyze the background of the [REFERENCE_IMG] and generate the scene as if photographed in a real location possessing a similar atmosphere."
+      ],
       "Additions": []
     },
-    "Strictly Avoid": "Oversized head, big head, bobblehead, chibi proportions, anime anatomy, unrealistic proportions, Anime style, 2D, illustration, sketch, painting, 3D render, plastic skin, doll-like face, unreal engine, CGI, distorted face, changed facial features"
+    "Strictly Avoid": "Mixed facial features, facial feature morphing, Westernized Asian faces, Oversized head, big head, bobblehead, chibi proportions, anime anatomy, deformed anatomy, unrealistic proportions, Anime style, 2D, 2.5D, illustration, sketch, painting, digital painting, cel shading, flat colors, line art, 3D render, plastic skin, doll-like face, unreal engine, CGI, distorted face, changed facial features, vector art, anime eyes, blurry skin textures"
   }
 }

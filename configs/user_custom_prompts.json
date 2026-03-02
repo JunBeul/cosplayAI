@@ -1,8 +1,8 @@
 {
   "file_info": {
-    "version": "1.0",
+    "version": "2.0",
     "description": "Input user custom prompts",
-    "updated_at": "2026-02-26"
+    "updated_at": "2026-03-02"
   },
   "prompts": {
     "Crucial Constraints": {

@@ -1,37 +1,36 @@
 {
   "file_info": {
-    "version": "1.0",
+    "version": "2.0",
     "description": "Mode 3: Create standardized master face image from a user portrait",
-    "updated_at": "2026-02-26"
+    "updated_at": "2026-03-02"
   },
   "prompts": {
-    "Command": "Create a realistic studio portrait master image of the same person shown in [PERSON_IMG].",
+    "Command": "Generate an ultra-sharp, high-fidelity master identity portrait of the person in [PERSON_IMG].",
     "Crucial Constraints": {
-      "Facial Consistency": [
-        "PRECISELY ANALYZE AND MAP the unique facial geometry, bone structure, interpupillary distance (spacing between eyes), eye shape, nose bridge alignment, and jawline definition from [PERSON_IMG].",
-        "REPLICATE these exact features with absolute fidelity in the output master image. ",
-        "Maintain all distinctive landmarks like specific skin texture patterns, moles, freckles, or subtle natural asymmetry present in the source image to ensure a perfect likeness."
+      "Identity & Style Consistency": [
+        "PERFECT LIKENESS: Match the facial geometry of [PERSON_IMG] with 100% fidelity.",
+        "HAIRSTYLE: Replicate the exact hair flow and volume. Ensure the hair is not cropped at the top.",
+        "STRICT NO-ACCESSORIES: Remove glasses, earrings, necklaces, and hats."
       ],
-      "Pose": [
-        "PERFECTLY FRONT-FACING POSTURE. Head, torso, and BOTH shoulders must be completely square and parallel to the camera. Looking straight ahead directly into the lens.",
-        "No tilting of the head, no twisting of the body or shoulders."
+      "Strict Clothing Change": [
+        "MANDATORY CLOTHING: Replace any clothing in [PERSON_IMG] with a plain, neutral-colored crew-neck t-shirt.",
+        "FORBIDDEN: Strictly NO coats, NO jackets, NO hoodies, NO collars, NO buttons, and NO zippers.",
+        "The clothing must appear as a simple, thin fabric neckline visible only at the very bottom edge of the frame."
       ],
-      "Lighting": [
-        "Soft, even, professional studio lighting. Flat lighting designed to clearly reveal facial topography without harsh shadows."
+      "Aggressive Framing & Zoom": [
+        "TIGHT CROP: The image must be cropped strictly at the base of the neck/collarbone.",
+        "FACE DOMINANCE: The face must occupy 85% of the vertical frame. Minimize all non-facial space.",
+        "No chest or torso should be visible."
       ],
-      "Expression": [
-        "Neutral expression, mouth closed, relaxed facial features."
+      "Pose & Environment": [
+        "STRICT FRONT-FACING: 0-degree rotation, both ears equally visible, eye-level angle.",
+        "BACKGROUND: Solid, flat light grey (#D3D3D3) with zero texture or depth.",
+        "LIGHTING: High-key studio lighting, no shadows under the chin."
       ],
-      "Framing": ["Head and shoulders shot (passport photo style cropping)."],
-      "Clothing": [
-        "Wearing a simple, neutral-colored plain t-shirt (to avoid distraction from facial features)."
-      ],
-      "Background": ["Plain, solid light grey background."],
-      "Quality": [
-        "Ultra-realistic, 8k resolution, clean digital photography style, sharp focus on the eyes and facial details, detailed skin pores and texture clearly visible, no noise or grain."
+      "Technical Specs": [
+        "8k, photorealistic, sharp focus on pupils, visible skin texture, zero AI-smoothing."
       ],
       "Additions": ""
-    },
-    "Strictly Avoid": ""
+    }
   }
 }

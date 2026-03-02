@@ -1,13 +1,16 @@
 {
   "file_info": {
-    "version": "1.2",
+    "version": "2.0",
     "description": "Mode 1: General Cosplay Transformation - Focuses on K-pop idol aesthetic for general usage",
-    "updated_at": "2026-02-26"
+    "updated_at": "2026-03-02"
   },
   "prompts": {
-    "Command": "Take a very realistic cosplay photo of a girl dressed as a character in a [REFERENCE_IMG]. A cute Korean cosplayer who looks like a K-pop girl idol.",
+    "Command": "A RAW, true-to-life portrait photograph of a real human being-an exceedingly cute and endearing Korean K-pop idol-in a live-action adaptation, cosplaying the character in the [REFERENCE_IMG].",
     "Crucial Constraints": {
-      "Realistic Body Proportions": "Appearance Criteria: A youthful, cute appearance with a short lower facial structure (baby face)."
+      "Appearance & Proportions": [
+        "She features a soft, youthful face with slightly rounded cheeks and large, sparkling, expressive eyes to emphasize a friendly and adorable impression.",
+        "Her skin is naturally clear with visible fine pores, maintaining a perfect balance between a 'baby-face' aesthetic and lifelike human texture."
+      ]
     }
   }
 }

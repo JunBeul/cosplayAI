@@ -1,25 +1,29 @@
 {
   "file_info": {
-    "version": "1.2",
+    "version": "2.0",
     "description": "VFX & Special Features - Optional module for supernatural elements and specific color palettes",
-    "updated_at": "2026-03-01"
+    "updated_at": "2026-03-02"
   },
   "prompts": {
     "Crucial Constraints": {
       "Styling": [
-        "Vividly render [HAIR_COLOR] hair and clear, transparent [EYE_COLOR] pupils as seen in the [REFERENCE_IMG]."
+        "Style the subject with high-quality salon-dyed [HAIR_COLOR] hair and vibrant [EYE_COLOR] cosmetic contact lenses, perfectly matching the character's color palette in the [REFERENCE_IMG]."
       ],
       "Halo VFX": [
-        "If present in [REFERENCE_IMG], render the Halo as a luminous, high-quality CG energy ring. It should have a subtle ethereal glow (bloom effect) and cast realistic ambient light onto the subject's hair and shoulders."
+        "If a Halo is present in the [REFERENCE_IMG], render it strictly as a flat, glowing, high-quality 2D-style digital CG element floating above the subject.",
+        "It should look like an intentional post-production VFX addition with a vibrant, self-luminous bloom effect, distinct from the physical environment."
       ],
       "Animal Features": [
-        "If present in [REFERENCE_IMG], recreate animal ears and tails with highly realistic fur textures that seamlessly blend with the character's hair. They should look like natural biological features, not cheap props."
+        "If animal ears or tails are present in the [REFERENCE_IMG], render them explicitly as premium, ultra-high-quality cosplay accessories.",
+        "Craft them using luxurious faux fur and professional costume materials to distinctly showcase them as expensive, expertly made wearable props, not actual biological anatomy."
       ],
       "Combat Props": [
-        "[COMBAT_PROP_ITEMS] 들의 소품을 잊지 말고 추가하시오."
+        "Equip the subject with [COMBAT_PROP_ITEMS] meticulously replicating the design from the [REFERENCE_IMG].",
+        "Render these weapons strictly as high-end, professionally crafted cosplay props made from physical costume materials like dense painted EVA foam, lightweight PVC, or stylized resin, clearly distinguishable from actual lethal weapons."
       ],
       "Wig Props": [
-        "[WIG_PROP_ITEMS] 스타일의 날개 소품을 잊지 말고 추가하시오."
+        "Attach [WIG_PROP_ITEMS] to the subject, accurately reproducing the shape and scale from the [REFERENCE_IMG].",
+        "Render these wings explicitly as premium theatrical cosplay props crafted from high-quality artificial feathers, visible wireframes, or structural fabrics, avoiding the appearance of real, living biological wings."
       ]
     }
   }

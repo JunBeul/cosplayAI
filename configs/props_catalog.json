@@ -1,8 +1,8 @@
 {
   "file_info": {
-    "version": "1.2",
+    "version": "2.0",
     "description": "Selectable prop catalogs for prompt assembly",
-    "updated_at": "2026-03-01"
+    "updated_at": "2026-03-02"
   },
   "combat_props": {
     "pistol": "Pistol",
@@ -16,8 +16,9 @@
     "wand": "Magic wand"
   },
   "wig_props": {
-    "angel_wings": "천사 날개",
-    "demon_wings": "악마 날개",
-    "fairy_wings": "요정 날개"
+    "angel_wings": "Feathered wings",
+    "demon_wings": "Leathery wings",
+    "fairy_wings": "Fairy wings",
+    "dragon_wings": "Draconic wings"
   }
 }

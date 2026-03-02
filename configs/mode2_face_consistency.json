@@ -1,18 +1,24 @@
 {
   "file_info": {
-    "version": "1.0",
+    "version": "2.0",
     "description": "Mode 2: Face Consistency - Preserves specific model identity using Master Image",
-    "updated_at": "2025-12-22"
+    "updated_at": "2026-03-02"
   },
   "prompts": {
-    "Command": "Generate a high-resolution photorealistic cosplay photograph of a real model with the face of [MASTER_IMG], using [REFERENCE_IMG] as a reference for the cosplay.",
+    "Command": "A RAW, true-to-life portrait photograph where preserving the EXACT facial identity of the human in the [MASTER_IMG] is the ABSOLUTE HIGHEST PRIORITY, cosplaying the costume and pose from the [REFERENCE_IMG].",
     "Crucial Constraints": {
-      "Realistic Body Proportions": [
-        "Face Consistency: You MUST thoroughly analyze and lock the facial features to ensure the subject is immediately recognizable as the same person in [MASTER_IMG]. This includes precisely replicating [MASTER_IMG] model's eye makeup, the presence and depth of the fullness under the eyes (aegyo-sal), the ratio between the lower face and forehead, eye shape, overall facial structure, and cheek volume."
+      "Identity Protection": [
+        "Treat the face in the [MASTER_IMG] as an unchangeable master template.",
+        "Even when applying expressions from the [REFERENCE_IMG], the underlying bone structure, facial width-to-length ratio, and the subject's core identity must remain 100% consistent and unaltered."
+      ],
+      "Appearance & Proportions": [
+        "(ABSOLUTE PRIORITY) Anchor and firmly lock the exact facial identity of the person in the [MASTER_IMG].",
+        "There is ZERO TOLERANCE for any facial feature leakage from the character in the [REFERENCE_IMG].",
+        "You must strictly analyze and fixate the biometric-level details of the [MASTER_IMG]: the specific eye-lid fold, the exact bridge of the nose, the unique curve of the lips, and the authentic East Asian (Korean) facial topography."
       ],
       "Facial Expression Transfer": [
-        "Expression: Accurately apply the facial expression of the character in [REFERENCE_IMG] onto the face of [MASTER_IMG].",
-        "Analyze and perfectly reproduce the emotional nuances, including the degree of eye squinting, the angle of the mouth corners, and gaze direction. Be careful not to distort the subject's original facial features while making the expression."
+        "Accurately replicate the emotional nuance from the [REFERENCE_IMG], including the degree of eye squinting, mouth corner angles, and gaze direction.",
+        "However, you must strictly ensure that the original facial features and identity of the [MASTER_IMG] are not distorted or altered while the subject is making the expression."
       ]
     }
   }
