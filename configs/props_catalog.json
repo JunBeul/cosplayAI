@@ -7,7 +7,7 @@
   "combat_props": {
     "pistol": "Pistol",
     "shield": "Shield",
-    "sniper_rifle": "Sniper Rifle",
+    "sniper-rifle": "Sniper Rifle",
     "rifle": "Rifle",
     "katana": "Katana",
     "longsword": "Longsword",
@@ -16,9 +16,9 @@
     "wand": "Magic wand"
   },
   "wig_props": {
-    "angel_wings": "Feathered wings",
-    "demon_wings": "Leathery wings",
-    "fairy_wings": "Fairy wings",
-    "dragon_wings": "Draconic wings"
+    "angel-wings": "Feathered wings",
+    "demon-wings": "Leathery wings",
+    "fairy-wings": "Fairy wings",
+    "dragon-wings": "Draconic wings"
   }
 }
