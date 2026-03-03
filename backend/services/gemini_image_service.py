@@ -46,6 +46,31 @@ class GeminiImageService:
         """
         raise RuntimeError(f"[{ERROR_NAMESPACE}:{code}] {detail}")
 
+    def validate_api_key(self, api_key: str) -> tuple[bool, str | None]:
+        """
+        전달받은 Gemini API 키의 유효성을 확인한다.
+        Args:
+            api_key: str: 사용자 입력 Gemini API 키.
+        Returns:
+            tuple[bool, str | None]: (유효 여부, 실패 사유)
+        """
+        candidate = str(api_key).strip()
+        if not candidate:
+            return False, "API key is empty"
+
+        try:
+            from google import genai
+        except ImportError:
+            return False, "google-genai package is required"
+
+        try:
+            client = genai.Client(api_key=candidate)
+            # 최소 권한/유효성 확인용 경량 호출: 모델 목록 1건 조회
+            list(client.models.list(config={"page_size": 1}))
+            return True, None
+        except Exception as exc:
+            return False, str(exc)
+
     def generate_image(self, contents: list[object], config: object) -> tuple[bytes, ResponseSummary]:
         """
         완성된 입력(contents/config)으로 Gemini를 호출하고 이미지 바이트를 반환한다.
