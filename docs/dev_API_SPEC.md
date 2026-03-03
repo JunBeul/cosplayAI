@@ -98,6 +98,31 @@
 
 ---
 
+
+## 인증 (사용자 Gemini API 키)
+
+서비스 확장 시 운영자 키를 공유하지 않기 위해, 생성 API 호출 시 사용자 개인 키를 헤더로 전달해야 합니다.
+
+- 필수 헤더: `X-Gemini-Api-Key: <USER_GEMINI_API_KEY>`
+- 키 검증 실패 시: `403 Forbidden`
+- 헤더 누락 시: `401 Unauthorized`
+
+### API 키 사전 검증 Endpoint
+
+- `GET /api/v1/auth/verify-key`
+- 용도: 앱에서 로그인처럼 "키 입력/검증" 단계 구현
+
+응답 예시:
+
+```json
+{
+  "valid": true,
+  "provider": "gemini"
+}
+```
+
+---
+
 ## 1. 일러스트 -> 코스프레 이미지 생성 (기능 1)
 
 ### Endpoint

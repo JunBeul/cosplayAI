@@ -1,13 +1,14 @@
 """
 파일명: routes_generation.py
 작성자: JunBeul
-설명: 헬스체크 및 이미지 생성 요청을 받아 파이프라인을 호출하고 결과를 API 응답으로 반환하는 라우터를 정의한다.
+설명: 헬스체크, API 키 검증 및 이미지 생성 요청을 받아 파이프라인을 호출하고 결과를 API 응답으로 반환하는 라우터를 정의한다.
 상위 모듈: backend.api.main
 하위 모듈: backend.api.deps, backend.api.schemas, backend.domain.models, backend.services.pipelines
 """
 
 
 from __future__ import annotations
+from typing import Annotated
 from fastapi import APIRouter, Depends
 from backend.domain.models import (
     CosplayBasicRequest,
@@ -16,18 +17,24 @@ from backend.domain.models import (
     MasterImageRequest,
 )
 from backend.services.pipelines import ImageGenerationPipeline
-from .deps import get_pipeline
-from .schemas import HealthResponseSchema
+from .deps import get_pipeline, require_user_api_key
+from .schemas import HealthResponseSchema, ApiKeyVerificationResponseSchema
 
 
-router = APIRouter(prefix="/api/v1", tags=["generation"])
-
+#router = APIRouter(prefix="/api/v1", tags=["generation"])
+router = APIRouter(prefix="", tags=["generation"])
 
 @router.get("/health", response_model=HealthResponseSchema)
 def health() -> HealthResponseSchema:
     # 서버가 떠 있는지만 확인하는 엔드포인트
     return HealthResponseSchema(status="ok")
 
+@router.get("/auth/verify-key", response_model=ApiKeyVerificationResponseSchema)
+def verify_api_key(
+    _api_key: Annotated[str, Depends(require_user_api_key)],
+) -> ApiKeyVerificationResponseSchema:
+    # 앱에서 "로그인"처럼 쓸 API 키 사전 검증 엔드포인트
+    return ApiKeyVerificationResponseSchema(valid=True, provider="gemini")
 
 @router.post("/generation/cosplay/basic", response_model=GenerationResult)
 def generate_cosplay_basic(
